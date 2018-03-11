@@ -3,7 +3,23 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/colin014/football-mentor/api"
+	"github.com/colin014/football-mentor/database"
+	"github.com/colin014/football-mentor/model"
+	"github.com/sirupsen/logrus"
+	"github.com/colin014/football-mentor/config"
 )
+
+var logger *logrus.Logger
+
+func init() {
+	logger = config.Logger()
+
+	db := database.GetDB()
+
+	logger.Infof("Create %s table(s)", model.Player.TableName(model.Player{}))
+
+	db.AutoMigrate(&model.Player{})
+}
 
 func main() {
 	router := gin.Default()
