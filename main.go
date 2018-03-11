@@ -25,5 +25,6 @@ func main() {
 	router := gin.Default()
 	v1 := router.Group("/api")
 	v1.GET("/players", api.GetPlayers)
+	v1.POST("/players", api.CreatePlayer)
 	router.Run(":6060")
 }

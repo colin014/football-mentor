@@ -1,6 +1,9 @@
 package model
 
+import "github.com/jinzhu/gorm"
+
 type Player struct {
+	gorm.Model
 	Name       string `json:"name" binding:"required"`
 	Email      string `json:"email,omitempty"`
 	Address    string `json:"address" binding:"required"`
