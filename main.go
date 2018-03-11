@@ -26,5 +26,6 @@ func main() {
 	v1 := router.Group("/api")
 	v1.GET("/players", api.GetPlayers)
 	v1.POST("/players", api.CreatePlayer)
+	v1.DELETE("/player/:id", api.DeletePlayer)
 	router.Run(":6060")
 }
