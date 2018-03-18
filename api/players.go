@@ -1,13 +1,13 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/colin014/football-mentor/config"
 	"github.com/colin014/football-mentor/database"
 	"github.com/colin014/football-mentor/model"
-	"net/http"
-	"github.com/sirupsen/logrus"
-	"github.com/colin014/football-mentor/config"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
+	"net/http"
 	"strconv"
 )
 

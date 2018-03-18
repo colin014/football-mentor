@@ -3,11 +3,11 @@ package database
 import (
 	"sync"
 
+	"github.com/colin014/football-mentor/config"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/colin014/football-mentor/config"
 )
 
 var dbOnce sync.Once

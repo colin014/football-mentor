@@ -27,5 +27,6 @@ func main() {
 	v1.GET("/players", api.GetPlayers)
 	v1.POST("/players", api.CreatePlayer)
 	v1.DELETE("/player/:id", api.DeletePlayer)
+	v1.GET("/mobile/data", api.GetMobileData)
 	router.Run(":6060")
 }
