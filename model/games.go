@@ -20,7 +20,7 @@ type Result struct {
 }
 
 type Event struct {
-	ResultId   uint   `gorm:"primary_key"`
+	ResultId   uint   `gorm:"foreign_key"`
 	IsHome     bool   `json:"is_home"`
 	Type       int    `json:"type"`
 	Minute     int    `json:"minute"`

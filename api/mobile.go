@@ -125,7 +125,6 @@ func GetMobileData(c *gin.Context) {
 				OpponentTeamLogo: "https://upload.wikimedia.org/wikipedia/hif/c/c1/Crystal_Palace_FC_logo.png",
 				Date:             "20180331",
 				Time:             "13:30",
-				Result:           nil,
 			},
 		},
 	}
