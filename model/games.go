@@ -3,7 +3,7 @@ package model
 import "github.com/jinzhu/gorm"
 
 type Game struct {
-	gorm.Model
+	gorm.Model               `json:"-"`
 	IsHome           bool    `json:"is_home"`
 	OpponentTeamName string  `json:"opponent_team_name"`
 	OpponentTeamLogo string  `json:"opponent_team_logo"`
@@ -13,14 +13,14 @@ type Game struct {
 }
 
 type Result struct {
-	GameId   uint    `gorm:"primary_key"`
+	GameId   uint    `gorm:"primary_key" json:"-"`
 	HomeGoal int     `json:"home_goal"`
 	AwayGoal int     `json:"away_goal"`
 	Events   []Event `json:"events"`
 }
 
 type Event struct {
-	ResultId   uint   `gorm:"foreign_key"`
+	ResultId   uint   `gorm:"foreign_key" json:"-"`
 	IsHome     bool   `json:"is_home"`
 	Type       int    `json:"type"`
 	Minute     int    `json:"minute"`

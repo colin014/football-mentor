@@ -3,7 +3,7 @@ package model
 import "github.com/jinzhu/gorm"
 
 type Player struct {
-	gorm.Model
+	gorm.Model          `json:"-"`
 	Name         string `json:"name" binding:"required"`
 	ImageUrl     string `json:"image_url,omitempty"`
 	BirthDate    string `json:"birth_date,omitempty"`

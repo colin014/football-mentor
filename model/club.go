@@ -3,7 +3,7 @@ package model
 import "github.com/jinzhu/gorm"
 
 type Club struct {
-	gorm.Model
+	gorm.Model            `json:"-"`
 	Name           string `json:"name" binding:"required"`
 	LogoUrl        string `json:"logo_url" binding:"required"`
 	LeagueName     string `json:"league_name" binding:"required"`
