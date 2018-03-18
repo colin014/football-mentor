@@ -9,6 +9,8 @@ import (
 func GetMobileData(c *gin.Context) {
 	// log := logger.WithFields(logrus.Fields{"tag": "Get Mobile data"})
 
+	players, _ := getAllPlayer()
+
 	c.JSON(http.StatusOK, model.GetMobileData{
 		TeamName:       "Liverpool FC",
 		TeamLogoUrl:    "http://assets3.lfcimages.com/uploads/placeholders/6683__1925__logo-125-splash-new-padded.png",
@@ -27,65 +29,66 @@ func GetMobileData(c *gin.Context) {
 		},
 		Teams: []model.Team{
 			{
-				Name: "Felnott",
-				Players: []model.Player{
-					{
-						Name:         "Bodgan Adam",
-						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p45175.png",
-						BirthDate:    "19870927",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 34,
-					},
-					{
-						Name:         "Dejan Lovren",
-						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p38454.png",
-						BirthDate:    "19890705",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 6,
-					},
-					{
-						Name:         "James Milner",
-						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p15157.png",
-						BirthDate:    "19860104",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 7,
-					},
-					{
-						Name:         "Trent Alexander-Arnold",
-						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p169187.png",
-						BirthDate:    "19981007",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 66,
-					},
-					{
-						Name:         "Mohamed Salah",
-						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p118748.png",
-						BirthDate:    "19920615",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 11,
-					},
-					{
-						Name:         "Roberto Firmino",
-						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p92217.png",
-						BirthDate:    "19911002",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 9,
-					},
-					{
-						Name:         "John Doe",
-						ImageUrl:     "",
-						BirthDate:    "",
-						BirthPlace:   "",
-						Description:  "",
-						JerseyNumber: 19,
-					},
-				},
+				Name:    "Felnott",
+				Players: players,
+				//Players: []model.Player{
+				//	{
+				//		Name:         "Bodgan Adam",
+				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p45175.png",
+				//		BirthDate:    "19870927",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 34,
+				//	},
+				//	{
+				//		Name:         "Dejan Lovren",
+				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p38454.png",
+				//		BirthDate:    "19890705",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 6,
+				//	},
+				//	{
+				//		Name:         "James Milner",
+				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p15157.png",
+				//		BirthDate:    "19860104",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 7,
+				//	},
+				//	{
+				//		Name:         "Trent Alexander-Arnold",
+				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p169187.png",
+				//		BirthDate:    "19981007",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 66,
+				//	},
+				//	{
+				//		Name:         "Mohamed Salah",
+				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p118748.png",
+				//		BirthDate:    "19920615",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 11,
+				//	},
+				//	{
+				//		Name:         "Roberto Firmino",
+				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p92217.png",
+				//		BirthDate:    "19911002",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 9,
+				//	},
+				//	{
+				//		Name:         "John Doe",
+				//		ImageUrl:     "",
+				//		BirthDate:    "",
+				//		BirthPlace:   "",
+				//		Description:  "",
+				//		JerseyNumber: 19,
+				//	},
+				//},
 			},
 		},
 		Games: []model.Game{

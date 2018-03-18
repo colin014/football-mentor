@@ -24,10 +24,7 @@ func GetPlayers(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "List players"})
 	log.Info("Start getting players")
 
-	var players []model.Player
-
-	db := database.GetDB()
-	if err := db.Find(&players).Error; err != nil {
+	if players, err := getAllPlayer(); err != nil {
 		log.Errorf("Error during loading players from database: %s", err.Error())
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
@@ -110,4 +107,14 @@ func DeletePlayer(c *gin.Context) {
 
 	}
 
+}
+
+func getAllPlayer() ([]model.Player, error) {
+	var players []model.Player
+
+	db := database.GetDB()
+	if err := db.Find(&players).Error; err != nil {
+		return nil, err
+	}
+	return players, nil
 }
