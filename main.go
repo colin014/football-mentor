@@ -16,9 +16,16 @@ func init() {
 
 	db := database.GetDB()
 
-	logger.Infof("Create %s table(s)", model.Player.TableName(model.Player{}))
+	logger.Info("Create table(s): ",
+		model.Player.TableName(model.Player{}),
+		", ",
+		model.Club.TableName(model.Club{}),
+	)
 
-	db.AutoMigrate(&model.Player{})
+	db.AutoMigrate(
+		&model.Player{},
+		&model.Club{},
+	)
 }
 
 func main() {
@@ -28,5 +35,7 @@ func main() {
 	v1.POST("/players", api.CreatePlayer)
 	v1.DELETE("/player/:id", api.DeletePlayer)
 	v1.GET("/mobile/data", api.GetMobileData)
+	v1.GET("/club", api.GetClubInfo)
+	v1.PUT("/club", api.UpdateClubInfo)
 	router.Run(":6060")
 }

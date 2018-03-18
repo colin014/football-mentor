@@ -37,7 +37,7 @@ type Event struct {
 }
 
 type Team struct {
-	Name    string         `json:"name"`
+	Name    string   `json:"name"`
 	Players []Player `json:"players"`
 }
 

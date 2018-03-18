@@ -3,23 +3,26 @@ package api
 import (
 	"github.com/colin014/football-mentor/model"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func GetMobileData(c *gin.Context) {
-	// log := logger.WithFields(logrus.Fields{"tag": "Get Mobile data"})
+	log := logger.WithFields(logrus.Fields{"tag": "Get Mobile data"})
 
-	players, _ := getAllPlayer()
+	log.Info("Load players")
+	players, err := getAllPlayer()
+	if err != nil {
+		log.Errorf("Error during listing players: %s", err.Error())
+	}
 
-	c.JSON(http.StatusOK, model.GetMobileData{
-		TeamName:       "Liverpool FC",
-		TeamLogoUrl:    "http://assets3.lfcimages.com/uploads/placeholders/6683__1925__logo-125-splash-new-padded.png",
-		LeagueLogoUrl:  "https://is2-ssl.mzstatic.com/image/thumb/Purple62/v4/2e/4d/eb/2e4debf9-7cbc-b796-b26c-a119e470bde6/AppIcon-1x_U007emarketing-85-220-0-5.png/246x0w.jpg",
-		CurrentPlace:   2,
-		StadiumName:    "Anfield Road",
-		LeagueName:     "Premier League",
-		FacebookPageId: "LiverpoolFC",
-		Website:        "www.liverpoolfc.com",
+	log.Info("Load club info")
+	club, err := getClubInfo()
+	if err != nil {
+		log.Errorf("Error during getting club info: %s", err.Error())
+	}
+
+	resp := model.GetMobileData{
 		NextGame: model.Game{
 			IsHome:           true,
 			OpponentTeamName: "Atlético de Madrid",
@@ -31,64 +34,6 @@ func GetMobileData(c *gin.Context) {
 			{
 				Name:    "Felnott",
 				Players: players,
-				//Players: []model.Player{
-				//	{
-				//		Name:         "Bodgan Adam",
-				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p45175.png",
-				//		BirthDate:    "19870927",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 34,
-				//	},
-				//	{
-				//		Name:         "Dejan Lovren",
-				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p38454.png",
-				//		BirthDate:    "19890705",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 6,
-				//	},
-				//	{
-				//		Name:         "James Milner",
-				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p15157.png",
-				//		BirthDate:    "19860104",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 7,
-				//	},
-				//	{
-				//		Name:         "Trent Alexander-Arnold",
-				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p169187.png",
-				//		BirthDate:    "19981007",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 66,
-				//	},
-				//	{
-				//		Name:         "Mohamed Salah",
-				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p118748.png",
-				//		BirthDate:    "19920615",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 11,
-				//	},
-				//	{
-				//		Name:         "Roberto Firmino",
-				//		ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p92217.png",
-				//		BirthDate:    "19911002",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 9,
-				//	},
-				//	{
-				//		Name:         "John Doe",
-				//		ImageUrl:     "",
-				//		BirthDate:    "",
-				//		BirthPlace:   "",
-				//		Description:  "",
-				//		JerseyNumber: 19,
-				//	},
-				//},
 			},
 		},
 		Games: []model.Game{
@@ -183,6 +128,19 @@ func GetMobileData(c *gin.Context) {
 				Result:           nil,
 			},
 		},
-	})
+	}
+
+	if club != nil {
+		resp.TeamName = club.Name
+		resp.TeamLogoUrl = club.LogoUrl
+		resp.LeagueLogoUrl = club.LeagueLogoUrl
+		resp.CurrentPlace = club.CurrentPlace
+		resp.StadiumName = club.StadiumName
+		resp.LeagueName = club.LeagueName
+		resp.FacebookPageId = club.FacebookPageId
+		resp.Website = club.Website
+	}
+
+	c.JSON(http.StatusOK, resp)
 
 }

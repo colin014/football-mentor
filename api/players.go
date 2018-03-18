@@ -1,8 +1,6 @@
 package api
 
 import (
-	"github.com/colin014/football-mentor/config"
-	"github.com/colin014/football-mentor/database"
 	"github.com/colin014/football-mentor/model"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -10,14 +8,6 @@ import (
 	"net/http"
 	"strconv"
 )
-
-var logger *logrus.Logger
-var db *gorm.DB
-
-func init() {
-	logger = config.Logger()
-	db = database.GetDB()
-}
 
 func GetPlayers(c *gin.Context) {
 
@@ -112,7 +102,6 @@ func DeletePlayer(c *gin.Context) {
 func getAllPlayer() ([]model.Player, error) {
 	var players []model.Player
 
-	db := database.GetDB()
 	if err := db.Find(&players).Error; err != nil {
 		return nil, err
 	}
