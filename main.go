@@ -20,11 +20,20 @@ func init() {
 		model.Player.TableName(model.Player{}),
 		", ",
 		model.Club.TableName(model.Club{}),
+		", ",
+		model.Game.TableName(model.Game{}),
+		", ",
+		model.Result.TableName(model.Result{}),
+		", ",
+		model.Event.TableName(model.Event{}),
 	)
 
 	db.AutoMigrate(
 		&model.Player{},
 		&model.Club{},
+		&model.Game{},
+		&model.Result{},
+		&model.Event{},
 	)
 }
 
@@ -37,5 +46,6 @@ func main() {
 	v1.GET("/mobile/data", api.GetMobileData)
 	v1.GET("/club", api.GetClubInfo)
 	v1.PUT("/club", api.UpdateClubInfo)
+	v1.POST("/games", api.CreateGame)
 	router.Run(":6060")
 }

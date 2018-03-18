@@ -14,28 +14,6 @@ type GetMobileData struct {
 	Games          []Game `json:"games"`
 }
 
-type Game struct {
-	IsHome           bool    `json:"is_home"`
-	OpponentTeamName string  `json:"opponent_team_name"`
-	OpponentTeamLogo string  `json:"opponent_team_logo"`
-	Date             string  `json:"date"`
-	Time             string  `json:"time"`
-	Result           *Result `json:"result,omitempty"`
-}
-
-type Result struct {
-	HomeGoal int     `json:"home_goal"`
-	AwayGoal int     `json:"away_goal"`
-	Events   []Event `json:"events"`
-}
-
-type Event struct {
-	IsHome     bool   `json:"is_home"`
-	Type       int    `json:"type"`
-	Minute     int    `json:"minute"`
-	PlayerName string `json:"player_name"`
-}
-
 type Team struct {
 	Name    string   `json:"name"`
 	Players []Player `json:"players"`
