@@ -38,16 +38,7 @@ type Event struct {
 
 type Team struct {
 	Name    string         `json:"name"`
-	Players []PlayerMobile `json:"players"`
-}
-
-type PlayerMobile struct {
-	Name         string `json:"name"`
-	ImageUrl     string `json:"image_url"`
-	BirthDate    string `json:"birth_date"`
-	BirthPlace   string `json:"birth_place"`
-	Description  string `json:"description"`
-	JerseyNumber int    `json:"jersey_number"`
+	Players []Player `json:"players"`
 }
 
 type EventType int

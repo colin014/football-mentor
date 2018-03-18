@@ -28,7 +28,7 @@ func GetMobileData(c *gin.Context) {
 		Teams: []model.Team{
 			{
 				Name: "Felnott",
-				Players: []model.PlayerMobile{
+				Players: []model.Player{
 					{
 						Name:         "Bodgan Adam",
 						ImageUrl:     "https://platform-static-files.s3.amazonaws.com/premierleague/photos/players/250x250/p45175.png",

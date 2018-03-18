@@ -4,11 +4,12 @@ import "github.com/jinzhu/gorm"
 
 type Player struct {
 	gorm.Model
-	Name       string `json:"name" binding:"required"`
-	Email      string `json:"email,omitempty"`
-	Address    string `json:"address" binding:"required"`
-	BirthDate  string `json:"birth_date" binding:"required"`
-	BirthPlace string `json:"birth_place" binding:"required"`
+	Name         string `json:"name" binding:"required"`
+	ImageUrl     string `json:"image_url,omitempty"`
+	BirthDate    string `json:"birth_date,omitempty"`
+	BirthPlace   string `json:"birth_place,omitempty"`
+	Description  string `json:"description,omitempty"`
+	JerseyNumber int    `json:"jersey_number,omitempty"`
 }
 
 func (p Player) TableName() string {
