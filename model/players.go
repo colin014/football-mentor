@@ -14,6 +14,11 @@ type PlayerListResponse struct {
 	Players []PlayerModel `json:"players" binding:"required"`
 }
 
+type CreatePlayerResponse struct {
+	Id   uint   `json:"id"`
+	Name string `json:"name"`
+}
+
 func (p PlayerModel) TableName() string {
 	return "players"
 }

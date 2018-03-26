@@ -54,7 +54,10 @@ func CreatePlayer(c *gin.Context) {
 			})
 		} else {
 			log.Info("Save succeeded")
-			c.Status(http.StatusOK)
+			c.JSON(http.StatusCreated, model.CreatePlayerResponse{
+				Id:   playerRequest.ID,
+				Name: playerRequest.Name,
+			})
 		}
 	}
 }
