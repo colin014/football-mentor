@@ -40,7 +40,7 @@ func GetAllPlayer() ([]PlayerModel, error) {
 	return players, nil
 }
 
-func ConvertModelToResponse(players []PlayerModel) *PlayerListResponse {
+func ConvertPlayerModelToResponse(players []PlayerModel) *PlayerListResponse {
 	return &PlayerListResponse{Players: players}
 }
 

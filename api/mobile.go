@@ -23,7 +23,7 @@ func GetMobileData(c *gin.Context) {
 	}
 
 	resp := model.GetMobileData{
-		NextGame: model.Game{
+		NextGame: model.GameModel{
 			IsHome:           true,
 			OpponentTeamName: "Atlético de Madrid",
 			OpponentTeamLogo: "http://en.atleticodemadrid.com/system/escudos/303/original/escudo_atm.png?1499414948",
@@ -36,87 +36,87 @@ func GetMobileData(c *gin.Context) {
 				Players: players,
 			},
 		},
-		Games: []model.Game{
+		Games: []model.GameModel{
 			{
 				IsHome:           true,
 				OpponentTeamName: "Manchester City",
 				OpponentTeamLogo: "http://pluspng.com/img-png/manchester-city-fc-png-manchester-city-supporters-club-logo-manchester-city-logo-png-410.png",
 				Date:             "20180114",
 				Time:             "17:00",
-				Result: &model.Result{
+				Result: &model.ResultModel{
 					HomeGoal: 4,
 					AwayGoal: 3,
-					Events: []model.Event{
-						{
-							IsHome:     true,
-							Type:       model.Goal,
-							Minute:     9,
-							PlayerName: "Alex Oxlade-Chamberlain",
-						},
-						{
-							IsHome:     false,
-							Type:       model.Goal,
-							Minute:     40,
-							PlayerName: "Leroy Sané",
-						},
-						{
-							IsHome:     true,
-							Type:       model.Goal,
-							Minute:     59,
-							PlayerName: "Roberto Firmino",
-						},
-						{
-							IsHome:     true,
-							Type:       model.YellowCard,
-							Minute:     60,
-							PlayerName: "Roberto Firmino",
-						}, {
-							IsHome:     true,
-							Type:       model.Goal,
-							Minute:     61,
-							PlayerName: "Sadio Mané",
-						}, {
-							IsHome:     false,
-							Type:       model.YellowCard,
-							Minute:     65,
-							PlayerName: "Nicolás Otamendi",
-						}, {
-							IsHome:     true,
-							Type:       model.Goal,
-							Minute:     68,
-							PlayerName: "Mohamed Salah",
-						},
-						{
-							IsHome:     false,
-							Type:       model.YellowCard,
-							Minute:     69,
-							PlayerName: "Raheem Sterling",
-						},
-						{
-							IsHome:     false,
-							Type:       model.YellowCard,
-							Minute:     72,
-							PlayerName: "Fernandinho",
-						},
-						{
-							IsHome:     false,
-							Type:       model.Goal,
-							Minute:     84,
-							PlayerName: "Bernardo Silva",
-						},
-						{
-							IsHome:     false,
-							Type:       model.Goal,
-							Minute:     90,
-							PlayerName: "Ilkay Gündogan",
-						},
-						{
-							IsHome:     true,
-							Type:       model.YellowCard,
-							Minute:     90,
-							PlayerName: "James Milner",
-						},
-					},
+					//Events: []model.Event{
+					//	{
+					//		IsHome:     true,
+					//		Type:       model.Goal,
+					//		Minute:     9,
+					//		PlayerName: "Alex Oxlade-Chamberlain",
+					//	},
+					//	{
+					//		IsHome:     false,
+					//		Type:       model.Goal,
+					//		Minute:     40,
+					//		PlayerName: "Leroy Sané",
+					//	},
+					//	{
+					//		IsHome:     true,
+					//		Type:       model.Goal,
+					//		Minute:     59,
+					//		PlayerName: "Roberto Firmino",
+					//	},
+					//	{
+					//		IsHome:     true,
+					//		Type:       model.YellowCard,
+					//		Minute:     60,
+					//		PlayerName: "Roberto Firmino",
+					//	}, {
+					//		IsHome:     true,
+					//		Type:       model.Goal,
+					//		Minute:     61,
+					//		PlayerName: "Sadio Mané",
+					//	}, {
+					//		IsHome:     false,
+					//		Type:       model.YellowCard,
+					//		Minute:     65,
+					//		PlayerName: "Nicolás Otamendi",
+					//	}, {
+					//		IsHome:     true,
+					//		Type:       model.Goal,
+					//		Minute:     68,
+					//		PlayerName: "Mohamed Salah",
+					//	},
+					//	{
+					//		IsHome:     false,
+					//		Type:       model.YellowCard,
+					//		Minute:     69,
+					//		PlayerName: "Raheem Sterling",
+					//	},
+					//	{
+					//		IsHome:     false,
+					//		Type:       model.YellowCard,
+					//		Minute:     72,
+					//		PlayerName: "Fernandinho",
+					//	},
+					//	{
+					//		IsHome:     false,
+					//		Type:       model.Goal,
+					//		Minute:     84,
+					//		PlayerName: "Bernardo Silva",
+					//	},
+					//	{
+					//		IsHome:     false,
+					//		Type:       model.Goal,
+					//		Minute:     90,
+					//		PlayerName: "Ilkay Gündogan",
+					//	},
+					//	{
+					//		IsHome:     true,
+					//		Type:       model.YellowCard,
+					//		Minute:     90,
+					//		PlayerName: "James Milner",
+					//	},
+					//},
 				},
 			},
 			{

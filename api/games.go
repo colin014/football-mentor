@@ -13,7 +13,7 @@ func CreateGame(c *gin.Context) {
 	log.Info("Start creating game")
 
 	log.Info("Binding request")
-	var gameRequest model.Game
+	var gameRequest model.GameModel
 	if err := c.BindJSON(&gameRequest); err != nil {
 		log.Error("Error during binding request")
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -32,24 +32,12 @@ func CreateGame(c *gin.Context) {
 				Error:   err.Error(),
 			})
 		} else {
-			log.Info("Game save succeeded")
-			log.Info("Save event(s)")
+			log.Info("GameModel save succeeded")
 
-			if gameRequest.Result != nil {
-				for _, event := range gameRequest.Result.Events {
-					event.ResultId = gameRequest.Result.GameId
-					if err := db.Save(&event).Error; err != nil {
-						log.Errorf("Error during save event [%v]: %s", event, err.Error())
-						c.JSON(http.StatusInternalServerError, model.ErrorResponse{
-							Code:    http.StatusInternalServerError,
-							Message: "Error during save event(s)",
-							Error:   err.Error(),
-						})
-						return
-					}
-				}
-			}
-			c.Status(http.StatusCreated)
+			c.JSON(http.StatusCreated, model.CreateGameResponse{
+				Id:           gameRequest.ID,
+				OpponentTeam: gameRequest.OpponentTeamName,
+			})
 		}
 	}
 
@@ -60,7 +48,7 @@ func GetGames(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "List games"})
 	log.Info("Start getting games")
 
-	if games, err := getAllGames(); err != nil {
+	if games, err := model.GetAllGames(); err != nil {
 		log.Errorf("Error during loading games from database: %s", err.Error())
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
@@ -73,31 +61,4 @@ func GetGames(c *gin.Context) {
 		c.JSON(http.StatusOK, games)
 	}
 
-}
-
-func getAllGames() ([]model.Game, error) {
-	log := logger.WithFields(logrus.Fields{"tag": "Load games from database"})
-	var games []model.Game
-
-	if err := db.Find(&games).Error; err != nil {
-		return nil, err
-	}
-
-	for i, game := range games {
-		games[i].Result = &model.Result{}
-		if err := db.Where(model.Result{GameId: game.ID}).First(&(*games[i].Result)).Error; err != nil {
-			log.Warnf("Error during load result: %s", err.Error())
-			games[i].Result = nil
-		} else {
-			var events []model.Event
-			if err := db.Where(model.Event{ResultId: games[i].Result.GameId}).Find(&events).Error; err != nil {
-				log.Warnf("Error during load events to events: %s", err.Error())
-				games[i].Result.Events = nil
-			} else if len(events) != 0 {
-				games[i].Result.Events = events
-			}
-		}
-	}
-
-	return games, nil
 }

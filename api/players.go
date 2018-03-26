@@ -23,7 +23,7 @@ func GetPlayers(c *gin.Context) {
 
 	} else {
 		log.Info("getting players from database succeeded")
-		c.JSON(http.StatusOK, model.ConvertModelToResponse(players))
+		c.JSON(http.StatusOK, model.ConvertPlayerModelToResponse(players))
 	}
 
 }

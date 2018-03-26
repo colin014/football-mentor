@@ -21,9 +21,9 @@ func init() {
 		", ",
 		model.Club.TableName(model.Club{}),
 		", ",
-		model.Game.TableName(model.Game{}),
+		model.GameModel.TableName(model.GameModel{}),
 		", ",
-		model.Result.TableName(model.Result{}),
+		model.ResultModel.TableName(model.ResultModel{}),
 		", ",
 		model.Event.TableName(model.Event{}),
 	)
@@ -31,8 +31,8 @@ func init() {
 	db.AutoMigrate(
 		&model.PlayerModel{},
 		&model.Club{},
-		&model.Game{},
-		&model.Result{},
+		&model.GameModel{},
+		&model.ResultModel{},
 		&model.Event{},
 	)
 }
