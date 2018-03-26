@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/colin014/football-mentor/model"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
@@ -14,7 +13,7 @@ func GetPlayers(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "List players"})
 	log.Info("Start getting players")
 
-	if players, err := getAllPlayer(); err != nil {
+	if players, err := model.GetAllPlayer(); err != nil {
 		log.Errorf("Error during loading players from database: %s", err.Error())
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
@@ -24,7 +23,7 @@ func GetPlayers(c *gin.Context) {
 
 	} else {
 		log.Info("getting players from database succeeded")
-		c.JSON(http.StatusOK, players)
+		c.JSON(http.StatusOK, model.ConvertModelToResponse(players))
 	}
 
 }
@@ -35,7 +34,7 @@ func CreatePlayer(c *gin.Context) {
 	log.Info("Start creating player")
 
 	log.Info("Binding request")
-	var playerRequest model.Player
+	var playerRequest model.PlayerModel
 	if err := c.BindJSON(&playerRequest); err != nil {
 		log.Error("Error during binding request")
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -46,7 +45,7 @@ func CreatePlayer(c *gin.Context) {
 	} else {
 		log.Info("Binding request succeeded")
 		log.Info("Save player to database")
-		if err := db.Save(&playerRequest).Error; err != nil {
+		if err := playerRequest.Save(); err != nil {
 			log.Errorf("Error during save player: %s", err.Error())
 			c.JSON(http.StatusInternalServerError, model.ErrorResponse{
 				Code:    http.StatusInternalServerError,
@@ -74,8 +73,8 @@ func DeletePlayer(c *gin.Context) {
 		})
 	} else {
 		log.Infof("Player id: %d", uint(id))
-		var player model.Player
-		if err := db.Where(model.Player{Model: gorm.Model{ID: uint(id)}}).First(&player).Error; err != nil {
+		var player model.PlayerModel
+		if err := model.GetPlayerById(uint(id), &player); err != nil {
 			log.Errorf("Error during getting player from database[%d]: %s", uint(id), err.Error())
 			c.JSON(http.StatusNotFound, model.ErrorResponse{
 				Code:    http.StatusNotFound,
@@ -83,7 +82,7 @@ func DeletePlayer(c *gin.Context) {
 				Error:   err.Error(),
 			})
 		} else {
-			if err := db.Delete(player).Error; err != nil {
+			if err := player.Delete(); err != nil {
 				log.Errorf("Error during deleting player[%d]: %s", uint(id), err.Error())
 				c.JSON(http.StatusBadRequest, model.ErrorResponse{
 					Code:    http.StatusBadRequest,
@@ -97,13 +96,4 @@ func DeletePlayer(c *gin.Context) {
 
 	}
 
-}
-
-func getAllPlayer() ([]model.Player, error) {
-	var players []model.Player
-
-	if err := db.Find(&players).Error; err != nil {
-		return nil, err
-	}
-	return players, nil
 }

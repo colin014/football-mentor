@@ -15,8 +15,8 @@ type GetMobileData struct {
 }
 
 type Team struct {
-	Name    string   `json:"name"`
-	Players []Player `json:"players"`
+	Name    string        `json:"name"`
+	Players []PlayerModel `json:"players"`
 }
 
 type EventType int

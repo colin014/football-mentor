@@ -11,7 +11,7 @@ func GetMobileData(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Get Mobile data"})
 
 	log.Info("Load players")
-	players, err := getAllPlayer()
+	players, err := model.GetAllPlayer()
 	if err != nil {
 		log.Errorf("Error during listing players: %s", err.Error())
 	}

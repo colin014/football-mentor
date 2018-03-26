@@ -17,7 +17,7 @@ func init() {
 	db := database.GetDB()
 
 	logger.Info("Create table(s): ",
-		model.Player.TableName(model.Player{}),
+		model.PlayerModel.TableName(model.PlayerModel{}),
 		", ",
 		model.Club.TableName(model.Club{}),
 		", ",
@@ -29,7 +29,7 @@ func init() {
 	)
 
 	db.AutoMigrate(
-		&model.Player{},
+		&model.PlayerModel{},
 		&model.Club{},
 		&model.Game{},
 		&model.Result{},
