@@ -94,3 +94,12 @@ func GetAllEvents(gameId uint) ([]Event, error) {
 func DeleteEvent(gameId, eventId uint) error {
 	return db.Delete(Event{GameId: gameId, BaseModel: BaseModel{ID: eventId}}).Error
 }
+
+func (r *ResultModel) SaveResult(gameId uint) error {
+	r.GameId = gameId
+	return db.Save(&r).Error
+}
+
+func DeleteResult(gameId uint) error {
+	return db.Delete(ResultModel{GameId: gameId}).Error
+}

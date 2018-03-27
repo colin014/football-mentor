@@ -40,14 +40,22 @@ func init() {
 func main() {
 	router := gin.Default()
 	v1 := router.Group("/api")
+
 	v1.GET("/players", api.GetPlayers)
 	v1.POST("/players", api.CreatePlayer)
 	v1.DELETE("/player/:id", api.DeletePlayer)
+
 	v1.GET("/mobile/data", api.GetMobileData)
+
 	v1.GET("/club", api.GetClubInfo)
 	v1.PUT("/club", api.UpdateClubInfo)
+
 	v1.POST("/games", api.CreateGame)
 	v1.GET("/games", api.GetGames)
+
+	v1.POST("games/:gameid/result", api.CreateResult)
+	v1.DELETE("games/:gameid/result", api.DeleteResult)
+
 	v1.POST("/games/:gameid/events", api.CreateEvents)
 	v1.GET("/games/:gameid/events", api.ListEvents)
 	v1.DELETE("/games/:gameid/events/:eventid", api.DeleteEvent)

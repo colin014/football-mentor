@@ -101,6 +101,7 @@ func CreateEvents(c *gin.Context) {
 		return
 	}
 
+	log.Info("Event(s) created successfully")
 	c.Status(http.StatusCreated)
 
 }
@@ -145,13 +146,19 @@ func DeleteEvent(c *gin.Context) {
 		return
 	}
 
+	log.Infof("Start deleting event with gameId[%d], and evenId[%d]", gameId, eventId)
+
 	if err := model.DeleteEvent(uint(gameId), uint(eventId)); err != nil {
 		c.JSON(http.StatusBadRequest, components.ErrorResponse{
 			Code:    http.StatusBadRequest,
-			Message: "Error dering deleting",
+			Message: "Error during deleting",
 			Error:   err.Error(),
 		})
+		return
 	}
+
+	log.Info("Event deleted successfully")
+	c.Status(http.StatusOK)
 
 }
 
@@ -181,4 +188,73 @@ func getEventId(c *gin.Context) (int, bool) {
 	} else {
 		return int(eventId), true
 	}
+}
+
+func CreateResult(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Create result"})
+
+	log.Info("Start creating result")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	log.Debugf("Game id: %d", gameId)
+	log.Info("Binding request")
+
+	var createResultRequest model.ResultModel
+	if err := c.BindJSON(&createResultRequest); err != nil {
+		log.Errorf("Error during binding request: %s", err.Error())
+		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Error during binding request",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	log.Info("Binding succeeded")
+	log.Info("Save into database")
+
+	if err := createResultRequest.SaveResult(uint(gameId)); err != nil {
+		log.Errorf("Error during save: %s", err.Error())
+		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Error during save",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	log.Info("Save succeeded")
+	c.Status(http.StatusCreated)
+
+}
+
+func DeleteResult(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Create result"})
+
+	log.Info("Start deleting result")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	log.Debugf("Game id: %d", gameId)
+
+	if err := model.DeleteResult(uint(gameId)); err != nil {
+		log.Errorf("Error deleting result: %s", err.Error())
+		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Error during deleting",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	log.Info("Delete succeeded")
+	c.Status(http.StatusOK)
+
 }
