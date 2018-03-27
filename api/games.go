@@ -114,7 +114,7 @@ func ListEvents(c *gin.Context) {
 		return
 	}
 
-	log.Info("Start listing events by gameId: %s", gameId)
+	log.Infof("Start listing events by gameId: %s", gameId)
 
 	if events, err := model.GetAllEvents(uint(gameId)); err != nil {
 		log.Errorf("Error during listing events: %s", err.Error())
@@ -130,6 +130,31 @@ func ListEvents(c *gin.Context) {
 
 }
 
+func DeleteEvent(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Delete events"})
+
+	log.Info("Start deleting events")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	eventId, isOk := getEventId(c)
+	if !isOk {
+		return
+	}
+
+	if err := model.DeleteEvent(uint(gameId), uint(eventId)); err != nil {
+		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Error dering deleting",
+			Error:   err.Error(),
+		})
+	}
+
+}
+
 func getGameId(c *gin.Context) (int, bool) {
 	gameId, err := utils.ConvertStringToInt(c.Param("gameid"))
 	if err != nil {
@@ -141,5 +166,19 @@ func getGameId(c *gin.Context) (int, bool) {
 		return 0, false
 	} else {
 		return int(gameId), true
+	}
+}
+
+func getEventId(c *gin.Context) (int, bool) {
+	eventId, err := utils.ConvertStringToInt(c.Param("eventid"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "EventId is not a number",
+			Error:   "Wrong event id",
+		})
+		return 0, false
+	} else {
+		return int(eventId), true
 	}
 }

@@ -50,5 +50,7 @@ func main() {
 	v1.GET("/games", api.GetGames)
 	v1.POST("/games/:gameid/events", api.CreateEvents)
 	v1.GET("/games/:gameid/events", api.ListEvents)
+	v1.DELETE("/games/:gameid/events/:eventid", api.DeleteEvent)
+
 	router.Run(":6060")
 }

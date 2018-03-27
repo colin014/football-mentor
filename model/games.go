@@ -90,3 +90,7 @@ func GetAllEvents(gameId uint) ([]Event, error) {
 	err := db.Where(Event{GameId: gameId}).Find(&events).Error
 	return events, err
 }
+
+func DeleteEvent(gameId, eventId uint) error {
+	return db.Delete(Event{GameId: gameId, BaseModel: BaseModel{ID: eventId}}).Error
+}
