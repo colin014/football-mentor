@@ -65,6 +65,31 @@ func GetGames(c *gin.Context) {
 
 }
 
+func DeleteGame(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Delete game"})
+
+	log.Info("Start deleting game")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	if err := model.DeleteGame(uint(gameId)); err != nil {
+		log.Errorf("Error during delete game: %s", err.Error())
+		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Error during deleting",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	log.Info("Delete succeeded")
+	c.Status(http.StatusOK)
+
+}
+
 func CreateEvents(c *gin.Context) {
 
 	log := logger.WithFields(logrus.Fields{"tag": "Add events"})

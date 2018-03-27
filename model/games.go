@@ -103,3 +103,7 @@ func (r *ResultModel) SaveResult(gameId uint) error {
 func DeleteResult(gameId uint) error {
 	return db.Delete(ResultModel{GameId: gameId}).Error
 }
+
+func DeleteGame(gameId uint) error {
+	return db.Delete(GameModel{BaseModel: BaseModel{ID: gameId}}).Error
+}

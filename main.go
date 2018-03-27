@@ -52,6 +52,7 @@ func main() {
 
 	v1.POST("/games", api.CreateGame)
 	v1.GET("/games", api.GetGames)
+	v1.DELETE("/games/:gameid", api.DeleteGame)
 
 	v1.POST("games/:gameid/result", api.CreateResult)
 	v1.DELETE("games/:gameid/result", api.DeleteResult)
