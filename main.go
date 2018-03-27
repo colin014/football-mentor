@@ -48,5 +48,7 @@ func main() {
 	v1.PUT("/club", api.UpdateClubInfo)
 	v1.POST("/games", api.CreateGame)
 	v1.GET("/games", api.GetGames)
+	v1.POST("/games/:gameid/events", api.CreateEvents)
+	v1.GET("/games/:gameid/events", api.ListEvents)
 	router.Run(":6060")
 }

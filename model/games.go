@@ -26,11 +26,16 @@ type GameListResponse struct {
 }
 
 type Event struct {
-	ResultId   uint   `gorm:"foreign_key" json:"-"`
-	IsHome     bool   `json:"is_home"`
-	Type       int    `json:"type"`
-	Minute     int    `json:"minute"`
-	PlayerName string `json:"player_name"`
+	BaseModel
+	GameId     uint   `gorm:"foreign_key" json:"-"`
+	IsHome     bool   `json:"is_home" binding:"required"`
+	Type       int    `json:"type" binding:"required"`
+	Minute     int    `json:"minute" binding:"required"`
+	PlayerName string `json:"player_name" binding:"required"`
+}
+
+type CreateEventRequest struct {
+	Events []Event `json:"events" binding:"required"`
 }
 
 func (GameModel) TableName() string {
@@ -64,4 +69,24 @@ func GetAllGames() ([]GameModel, error) {
 
 func ConvertGameModelToResponse(games []GameModel) *GameListResponse {
 	return &GameListResponse{Games: games}
+}
+
+func (request *CreateEventRequest) SaveEvents(gameId uint) error {
+
+	for _, e := range request.Events {
+		e.GameId = gameId
+		err := db.Save(&e).Error
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+
+}
+
+func GetAllEvents(gameId uint) ([]Event, error) {
+	var events []Event
+	err := db.Where(Event{GameId: gameId}).Find(&events).Error
+	return events, err
 }
