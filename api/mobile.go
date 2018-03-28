@@ -1,145 +1,47 @@
 package api
 
 import (
-	"github.com/colin014/football-mentor/model"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/colin014/football-mentor/model"
 	"net/http"
 )
 
-func GetMobileData(c *gin.Context) {
-	log := logger.WithFields(logrus.Fields{"tag": "Get Mobile data"})
+func GetDashboardData(c *gin.Context) {
 
-	log.Info("Load players")
-	players, err := model.GetAllPlayer()
-	if err != nil {
-		log.Errorf("Error during listing players: %s", err.Error())
-	}
+	log := logger.WithFields(logrus.Fields{"tag": "Get dashboard"})
+	log.Info("Start getting dashboard")
 
-	log.Info("Load club info")
-	club, err := getClubInfo()
-	if err != nil {
+	log.Info("Stat getting club info")
+	if club, err := getClubInfo(); err != nil {
 		log.Errorf("Error during getting club info: %s", err.Error())
-	}
+		c.JSON(http.StatusInternalServerError, model.ErrorResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Error during getting club info",
+			Error:   err.Error(),
+		})
+	} else {
+		log.Info("Getting club info succeeded")
 
-	resp := model.GetMobileData{
-		NextGame: model.GameModel{
-			IsHome:           true,
-			OpponentTeamName: "Atlético de Madrid",
-			OpponentTeamLogo: "http://en.atleticodemadrid.com/system/escudos/303/original/escudo_atm.png?1499414948",
-			Date:             "20180114",
-			Time:             "21:00",
-		},
-		Teams: []model.Team{
-			{
-				Name:    "Felnott",
-				Players: players,
-			},
-		},
-		Games: []model.GameModel{
-			{
-				IsHome:           true,
-				OpponentTeamName: "Manchester City",
-				OpponentTeamLogo: "http://pluspng.com/img-png/manchester-city-fc-png-manchester-city-supporters-club-logo-manchester-city-logo-png-410.png",
-				Date:             "20180114",
-				Time:             "17:00",
-				Result: &model.ResultModel{
-					HomeGoal: 4,
-					AwayGoal: 3,
-					//Events: []model.Event{
-					//	{
-					//		IsHome:     true,
-					//		Type:       model.Goal,
-					//		Minute:     9,
-					//		PlayerName: "Alex Oxlade-Chamberlain",
-					//	},
-					//	{
-					//		IsHome:     false,
-					//		Type:       model.Goal,
-					//		Minute:     40,
-					//		PlayerName: "Leroy Sané",
-					//	},
-					//	{
-					//		IsHome:     true,
-					//		Type:       model.Goal,
-					//		Minute:     59,
-					//		PlayerName: "Roberto Firmino",
-					//	},
-					//	{
-					//		IsHome:     true,
-					//		Type:       model.YellowCard,
-					//		Minute:     60,
-					//		PlayerName: "Roberto Firmino",
-					//	}, {
-					//		IsHome:     true,
-					//		Type:       model.Goal,
-					//		Minute:     61,
-					//		PlayerName: "Sadio Mané",
-					//	}, {
-					//		IsHome:     false,
-					//		Type:       model.YellowCard,
-					//		Minute:     65,
-					//		PlayerName: "Nicolás Otamendi",
-					//	}, {
-					//		IsHome:     true,
-					//		Type:       model.Goal,
-					//		Minute:     68,
-					//		PlayerName: "Mohamed Salah",
-					//	},
-					//	{
-					//		IsHome:     false,
-					//		Type:       model.YellowCard,
-					//		Minute:     69,
-					//		PlayerName: "Raheem Sterling",
-					//	},
-					//	{
-					//		IsHome:     false,
-					//		Type:       model.YellowCard,
-					//		Minute:     72,
-					//		PlayerName: "Fernandinho",
-					//	},
-					//	{
-					//		IsHome:     false,
-					//		Type:       model.Goal,
-					//		Minute:     84,
-					//		PlayerName: "Bernardo Silva",
-					//	},
-					//	{
-					//		IsHome:     false,
-					//		Type:       model.Goal,
-					//		Minute:     90,
-					//		PlayerName: "Ilkay Gündogan",
-					//	},
-					//	{
-					//		IsHome:     true,
-					//		Type:       model.YellowCard,
-					//		Minute:     90,
-					//		PlayerName: "James Milner",
-					//	},
-					//},
-				},
-			},
-			{
-				IsHome:           false,
-				OpponentTeamName: "Crystal Palace FC",
-				OpponentTeamLogo: "https://upload.wikimedia.org/wikipedia/hif/c/c1/Crystal_Palace_FC_logo.png",
-				Date:             "20180331",
-				Time:             "13:30",
-			},
-		},
-	}
+		log.Info("Start getting next game")
+		game, err := model.GetNextGame()
+		if err != nil {
+			log.Errorf("Error during getting next game: %s", err.Error())
+		}
 
-	if club != nil {
-		resp.TeamName = club.Name
-		resp.TeamLogoUrl = club.LogoUrl
-		resp.LeagueLogoUrl = club.LeagueLogoUrl
-		resp.CurrentPlace = club.CurrentPlace
-		resp.StadiumName = club.StadiumName
-		resp.LeagueName = club.LeagueName
-		resp.FacebookPageId = club.FacebookPageId
-		resp.Website = club.Website
-	}
+		dashboard := model.DashboardResponse{
+			CurrentPlace:  club.CurrentPlace,
+			ClubName:      club.Name,
+			ClubLogoUrl:   club.LogoUrl,
+			LeagueName:    club.LeagueName,
+			LeagueLogoUrl: club.LeagueLogoUrl,
+			StadiumName:   club.StadiumName,
+			WebUrl:        club.Website,
+			NextGame:      game,
+		}
 
-	c.JSON(http.StatusOK, resp)
+		c.JSON(http.StatusOK, dashboard)
+
+	}
 
 }

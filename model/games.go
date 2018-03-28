@@ -1,5 +1,10 @@
 package model
 
+import (
+	"sort"
+	"time"
+)
+
 type GameModel struct {
 	BaseModel
 	IsHome           bool         `json:"is_home"`
@@ -106,4 +111,32 @@ func DeleteResult(gameId uint) error {
 
 func DeleteGame(gameId uint) error {
 	return db.Delete(GameModel{BaseModel: BaseModel{ID: gameId}}).Error
+}
+
+func GetNextGame() (*GameModel, error) {
+	if games, err := GetAllGames(); err != nil {
+		return nil, err
+	} else if len(games) == 0 {
+		return nil, nil
+	} else {
+
+		sort.Slice(games, func(i, j int) bool {
+			gameTimeI, _ := time.Parse("20060102", games[i].Date)
+			gameTimeJ, _ := time.Parse("20060102", games[j].Date)
+
+			return gameTimeI.Before(gameTimeJ)
+		})
+
+		now, _ := time.Parse("20060102", time.Now().Format("20060102"))
+
+		for _, game := range games {
+			date, _ := time.Parse("20060102", game.Date)
+			if !date.Before(now) {
+				return &game, nil
+			}
+		}
+
+		return &games[0], nil
+	}
+
 }

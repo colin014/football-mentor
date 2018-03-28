@@ -1,22 +1,14 @@
 package model
 
-type GetMobileData struct {
-	TeamName       string      `json:"team_name"`
-	TeamLogoUrl    string      `json:"team_logo_url"`
-	LeagueLogoUrl  string      `json:"league_logo_url"`
-	CurrentPlace   int         `json:"current_place"`
-	StadiumName    string      `json:"stadium_name"`
-	LeagueName     string      `json:"league_name"`
-	FacebookPageId string      `json:"facebook_page_id"`
-	Website        string      `json:"website"`
-	NextGame       GameModel   `json:"next_game"`
-	Teams          []Team      `json:"teams"`
-	Games          []GameModel `json:"games"`
-}
-
-type Team struct {
-	Name    string        `json:"name"`
-	Players []PlayerModel `json:"players"`
+type DashboardResponse struct {
+	CurrentPlace  int        `json:"current_place,omitempty"`
+	ClubName      string     `json:"club_name,omitempty"`
+	ClubLogoUrl   string     `json:"club_logo_url,omitempty"`
+	LeagueName    string     `json:"league_name"`
+	LeagueLogoUrl string     `json:"league_logo_url,omitempty"`
+	StadiumName   string     `json:"stadium_name,omitempty"`
+	WebUrl        string     `json:"web_url,omitempty"`
+	NextGame      *GameModel `json:"next_game,omitempty"`
 }
 
 type EventType int

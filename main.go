@@ -45,8 +45,6 @@ func main() {
 	v1.POST("/players", api.CreatePlayer)
 	v1.DELETE("/player/:id", api.DeletePlayer)
 
-	v1.GET("/mobile/data", api.GetMobileData)
-
 	v1.GET("/club", api.GetClubInfo)
 	v1.PUT("/club", api.UpdateClubInfo)
 
@@ -54,12 +52,14 @@ func main() {
 	v1.GET("/games", api.GetGames)
 	v1.DELETE("/games/:gameid", api.DeleteGame)
 
-	v1.POST("games/:gameid/result", api.CreateResult)
-	v1.DELETE("games/:gameid/result", api.DeleteResult)
+	v1.POST("/games/:gameid/result", api.CreateResult)
+	v1.DELETE("/games/:gameid/result", api.DeleteResult)
 
 	v1.POST("/games/:gameid/events", api.CreateEvents)
 	v1.GET("/games/:gameid/events", api.ListEvents)
 	v1.DELETE("/games/:gameid/events/:eventid", api.DeleteEvent)
+
+	v1.GET("/mobile/dashboard", api.GetDashboardData)
 
 	router.Run(":6060")
 }
