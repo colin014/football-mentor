@@ -60,7 +60,7 @@ func GetGames(c *gin.Context) {
 
 	} else {
 		log.Info("getting games from database succeeded")
-		c.JSON(http.StatusOK, games)
+		c.JSON(http.StatusOK, model.ConvertGameModelToResponse(games))
 	}
 
 }
