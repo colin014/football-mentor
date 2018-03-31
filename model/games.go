@@ -30,7 +30,11 @@ type GameListResponse struct {
 	Games []GameModel `json:"games" binding:"required"`
 }
 
-type Event struct {
+type EventListResponse struct {
+	Events []EventModel `json:"events" binding:"required"`
+}
+
+type EventModel struct {
 	BaseModel
 	GameId     uint   `gorm:"foreign_key" json:"-"`
 	IsHome     bool   `json:"is_home" binding:"required"`
@@ -40,7 +44,7 @@ type Event struct {
 }
 
 type CreateEventRequest struct {
-	Events []Event `json:"events" binding:"required"`
+	Events []EventModel `json:"events" binding:"required"`
 }
 
 func (GameModel) TableName() string {
@@ -51,7 +55,7 @@ func (ResultModel) TableName() string {
 	return "results"
 }
 
-func (Event) TableName() string {
+func (EventModel) TableName() string {
 	return "events"
 }
 
@@ -76,6 +80,10 @@ func ConvertGameModelToResponse(games []GameModel) *GameListResponse {
 	return &GameListResponse{Games: games}
 }
 
+func ConvertEventModelToResponse(events []EventModel) *EventListResponse {
+	return &EventListResponse{Events: events}
+}
+
 func (request *CreateEventRequest) SaveEvents(gameId uint) error {
 
 	for _, e := range request.Events {
@@ -90,14 +98,14 @@ func (request *CreateEventRequest) SaveEvents(gameId uint) error {
 
 }
 
-func GetAllEvents(gameId uint) ([]Event, error) {
-	var events []Event
-	err := db.Where(Event{GameId: gameId}).Find(&events).Error
+func GetAllEvents(gameId uint) ([]EventModel, error) {
+	var events []EventModel
+	err := db.Where(EventModel{GameId: gameId}).Find(&events).Error
 	return events, err
 }
 
 func DeleteEvent(gameId, eventId uint) error {
-	return db.Delete(Event{GameId: gameId, BaseModel: BaseModel{ID: eventId}}).Error
+	return db.Delete(EventModel{GameId: gameId, BaseModel: BaseModel{ID: eventId}}).Error
 }
 
 func (r *ResultModel) SaveResult(gameId uint) error {

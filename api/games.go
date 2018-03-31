@@ -151,7 +151,7 @@ func ListEvents(c *gin.Context) {
 		})
 	} else {
 		log.Info("Load events succeeded")
-		c.JSON(http.StatusOK, events)
+		c.JSON(http.StatusOK, model.ConvertEventModelToResponse(events))
 	}
 
 }
