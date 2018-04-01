@@ -83,6 +83,7 @@ func ConvertGameModelToResponse(games []GameModel) *GameListResponse {
 }
 
 func ConvertEventModelToResponse(events []EventModel) *EventListResponse {
+	sortEvents(events)
 	return &EventListResponse{Events: events}
 }
 
@@ -152,5 +153,11 @@ func sortGames(games []GameModel) {
 		gameTimeJ, _ := time.Parse("20060102", games[j].Date)
 
 		return gameTimeI.Before(gameTimeJ)
+	})
+}
+
+func sortEvents(events []EventModel) {
+	sort.Slice(events, func(i, j int) bool {
+		return events[i].Minute < events[j].Minute
 	})
 }
