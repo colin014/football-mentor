@@ -17,4 +17,5 @@ const (
 	Goal       = 0
 	YellowCard = 1
 	RedCard    = 2
+	OwnGoal    = 3
 )

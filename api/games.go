@@ -140,7 +140,7 @@ func ListEvents(c *gin.Context) {
 		return
 	}
 
-	log.Infof("Start listing events by gameId: %s", gameId)
+	log.Infof("Start listing events by gameId: %d", gameId)
 
 	if events, err := model.GetAllEvents(uint(gameId)); err != nil {
 		log.Errorf("Error during listing events: %s", err.Error())

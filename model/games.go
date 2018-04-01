@@ -77,6 +77,8 @@ func GetAllGames() ([]GameModel, error) {
 }
 
 func ConvertGameModelToResponse(games []GameModel) *GameListResponse {
+	// sort before return
+	sortGames(games)
 	return &GameListResponse{Games: games}
 }
 
@@ -128,12 +130,7 @@ func GetNextGame() (*GameModel, error) {
 		return nil, nil
 	} else {
 
-		sort.Slice(games, func(i, j int) bool {
-			gameTimeI, _ := time.Parse("20060102", games[i].Date)
-			gameTimeJ, _ := time.Parse("20060102", games[j].Date)
-
-			return gameTimeI.Before(gameTimeJ)
-		})
+		sortGames(games)
 
 		now, _ := time.Parse("20060102", time.Now().Format("20060102"))
 
@@ -147,4 +144,13 @@ func GetNextGame() (*GameModel, error) {
 		return &games[0], nil
 	}
 
+}
+
+func sortGames(games []GameModel) {
+	sort.Slice(games, func(i, j int) bool {
+		gameTimeI, _ := time.Parse("20060102", games[i].Date)
+		gameTimeJ, _ := time.Parse("20060102", games[j].Date)
+
+		return gameTimeI.Before(gameTimeJ)
+	})
 }
