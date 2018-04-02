@@ -8,11 +8,19 @@ import (
 type GameModel struct {
 	BaseModel
 	IsHome           bool         `json:"is_home"`
-	OpponentTeamName string       `json:"opponent_team_name"`
-	OpponentTeamLogo string       `json:"opponent_team_logo"`
-	Date             string       `json:"date"`
-	Time             string       `json:"time"`
+	OpponentTeamName string       `json:"opponent_team_name,omitempty"`
+	OpponentTeamLogo string       `json:"opponent_team_logo,omitempty"`
+	Date             string       `json:"date,omitempty"`
+	Time             string       `json:"time,omitempty"`
 	Result           *ResultModel `json:"result,omitempty"`
+}
+
+type UpdateGameRequest struct {
+	IsHome           *bool  `json:"is_home,omitempty"`
+	OpponentTeamName string `json:"opponent_team_name,omitempty"`
+	OpponentTeamLogo string `json:"opponent_team_logo,omitempty"`
+	Date             string `json:"date,omitempty"`
+	Time             string `json:"time,omitempty"`
 }
 
 type CreateGameResponse struct {
@@ -57,6 +65,30 @@ func (ResultModel) TableName() string {
 
 func (EventModel) TableName() string {
 	return "events"
+}
+
+func (g *GameModel) Update(r *UpdateGameRequest) error {
+	if r.IsHome != nil {
+		g.IsHome = *r.IsHome
+	}
+
+	if len(r.OpponentTeamName) != 0 {
+		g.OpponentTeamName = r.OpponentTeamName
+	}
+
+	if len(r.OpponentTeamLogo) != 0 {
+		g.OpponentTeamLogo = r.OpponentTeamLogo
+	}
+
+	if len(r.Date) != 0 {
+		g.Date = r.Date
+	}
+
+	if len(r.Time) != 0 {
+		g.Time = r.Time
+	}
+
+	return db.Save(&g).Error
 }
 
 func GetAllGames() ([]GameModel, error) {

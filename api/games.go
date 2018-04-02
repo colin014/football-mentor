@@ -65,6 +65,47 @@ func GetGames(c *gin.Context) {
 
 }
 
+func UpdateGame(c *gin.Context) {
+
+	log := logger.WithFields(logrus.Fields{"tag": "Update game"})
+	log.Info("Start updating game")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	if game, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, components.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Game not found",
+			Error:   err.Error(),
+		})
+	} else {
+		log.Info("Binding request")
+		var gameRequest model.UpdateGameRequest
+		if err := c.BindJSON(&gameRequest); err != nil {
+			log.Errorf("Error during binding request: %s", err.Error())
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during binding request",
+				Error:   err.Error(),
+			})
+		} else if err := game.Update(&gameRequest); err != nil {
+			log.Errorf("Error during update game: %s", err.Error())
+			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during update player",
+				Error:   err.Error(),
+			})
+		} else {
+			log.Info("Game updated successfully")
+			c.Status(http.StatusAccepted)
+		}
+	}
+}
+
 func DeleteGame(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Delete game"})
 
