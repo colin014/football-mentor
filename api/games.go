@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"github.com/colin014/football-mentor/utils"
 )
 
 func CreateGame(c *gin.Context) {

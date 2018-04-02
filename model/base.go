@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/colin014/football-mentor/database"
+	"github.com/jinzhu/gorm"
 	"time"
 )
 

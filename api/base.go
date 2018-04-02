@@ -3,12 +3,12 @@ package api
 import (
 	"github.com/colin014/football-mentor/config"
 	"github.com/colin014/football-mentor/database"
+	"github.com/colin014/football-mentor/model"
+	"github.com/colin014/football-mentor/utils"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
-	"github.com/gin-gonic/gin"
-	"github.com/colin014/football-mentor/utils"
 	"net/http"
-	"github.com/colin014/football-mentor/model"
 )
 
 var logger *logrus.Logger

@@ -1,9 +1,9 @@
 package api
 
 import (
+	"github.com/colin014/football-mentor/model"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/colin014/football-mentor/model"
 	"net/http"
 )
 
