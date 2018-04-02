@@ -148,32 +148,40 @@ func CreateEvents(c *gin.Context) {
 		return
 	}
 
-	var createEventRequest model.CreateEventRequest
-	if err := c.BindJSON(&createEventRequest); err != nil {
-		log.Errorf("Error during bind json: %s", err.Error())
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "Error during binding",
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
 			Error:   err.Error(),
 		})
-		return
+	} else {
+		var createEventRequest model.CreateEventRequest
+		if err := c.BindJSON(&createEventRequest); err != nil {
+			log.Errorf("Error during bind json: %s", err.Error())
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during binding",
+				Error:   err.Error(),
+			})
+		} else {
+			log.Debugf("Binding succeeded: %#v", createEventRequest)
+			log.Info("Save events into database")
+
+			if err := createEventRequest.SaveEvents(uint(gameId)); err != nil {
+				log.Errorf("Error during save events: %s", err.Error())
+				c.JSON(http.StatusBadRequest, model.ErrorResponse{
+					Code:    http.StatusBadRequest,
+					Message: "Error during save",
+					Error:   err.Error(),
+				})
+			} else {
+				log.Info("Event(s) created successfully")
+				c.Status(http.StatusCreated)
+			}
+
+		}
 	}
-
-	log.Debugf("Binding succeeded: %#v", createEventRequest)
-	log.Info("Save events into database")
-
-	if err := createEventRequest.SaveEvents(uint(gameId)); err != nil {
-		log.Errorf("Error during save events: %s", err.Error())
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "Error during save",
-			Error:   err.Error(),
-		})
-		return
-	}
-
-	log.Info("Event(s) created successfully")
-	c.Status(http.StatusCreated)
 
 }
 
