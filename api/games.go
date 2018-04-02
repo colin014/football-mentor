@@ -277,18 +277,30 @@ func DeleteEvent(c *gin.Context) {
 
 	log.Infof("Start deleting event with gameId[%d], and evenId[%d]", gameId, eventId)
 
-	if err := model.DeleteEvent(uint(gameId), uint(eventId)); err != nil {
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
+			Error:   err.Error(),
+		})
+	} else if _, err := model.GetEvent(uint(gameId), uint(eventId)); err != nil {
+		log.Errorf("Error during getting event: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting event",
+			Error:   err.Error(),
+		})
+	} else if err := model.DeleteEvent(uint(gameId), uint(eventId)); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
 			Error:   err.Error(),
 		})
-		return
+	} else {
+		log.Info("Event deleted successfully")
+		c.Status(http.StatusOK)
 	}
-
-	log.Info("Event deleted successfully")
-	c.Status(http.StatusOK)
-
 }
 
 func getGameId(c *gin.Context) (int, bool) {
