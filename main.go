@@ -60,6 +60,7 @@ func main() {
 
 	v1.POST("/games/:gameid/events", api.CreateEvents)
 	v1.GET("/games/:gameid/events", api.ListEvents)
+	v1.PUT("/games/:gameid/events/:eventid", api.UpdateEvent)
 	v1.DELETE("/games/:gameid/events/:eventid", api.DeleteEvent)
 
 	v1.GET("/mobile/dashboard", api.GetDashboardData)

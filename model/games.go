@@ -56,6 +56,13 @@ type EventModel struct {
 	PlayerName string `json:"player_name" binding:"required"`
 }
 
+type UpdateEventModel struct {
+	IsHome     *bool  `json:"is_home,omitempty"`
+	Type       *int   `json:"type,omitempty"`
+	Minute     *int   `json:"minute,omitempty"`
+	PlayerName string `json:"player_name,omitempty"`
+}
+
 type CreateEventRequest struct {
 	Events []EventModel `json:"events" binding:"required"`
 }
@@ -151,10 +158,36 @@ func (r *ResultModel) Update(req *UpdateResultRequest) error {
 	return db.Save(&r).Error
 }
 
+func (e *EventModel) Update(r *UpdateEventModel) error {
+	if r.IsHome != nil {
+		e.IsHome = *r.IsHome
+	}
+
+	if r.Type != nil {
+		e.Type = *r.Type
+	}
+
+	if r.Minute != nil {
+		e.Minute = *r.Minute
+	}
+
+	if len(r.PlayerName) != 0 {
+		e.PlayerName = r.PlayerName
+	}
+
+	return db.Save(&e).Error
+}
+
 func GetResult(gameId uint) (*ResultModel, error) {
 	var result ResultModel
 	err := db.Where(ResultModel{GameId: gameId}).First(&result).Error
 	return &result, err
+}
+
+func GetEvent(gameId, eventId uint) (EventModel, error) {
+	var event EventModel
+	err := db.Where(EventModel{BaseModel: BaseModel{ID: eventId}, GameId: gameId}).First(&event).Error
+	return event, err
 }
 
 func GetAllEvents(gameId uint) ([]EventModel, error) {

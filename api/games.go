@@ -177,6 +177,64 @@ func CreateEvents(c *gin.Context) {
 
 }
 
+func UpdateEvent(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Update event"})
+	log.Info("Start updating event")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	eventId, isOk := getEventId(c)
+	if !isOk {
+		return
+	}
+
+	log.Infof("Update event (gameId: %d, eventId: %s)", gameId, eventId)
+
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
+			Error:   err.Error(),
+		})
+	} else if event, err := model.GetEvent(uint(gameId), uint(eventId)); err != nil {
+		log.Errorf("Error during getting event: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting event",
+			Error:   err.Error(),
+		})
+	} else {
+		log.Info("Binding request")
+		var request model.UpdateEventModel
+		if err := c.BindJSON(&request); err != nil {
+			log.Errorf("Error during binding request: %s", err.Error())
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during binding request",
+				Error:   err.Error(),
+			})
+		} else {
+			log.Info("Binding succeeded")
+			if err := event.Update(&request); err != nil {
+				log.Errorf("Error during updating event: %s", err.Error())
+				c.JSON(http.StatusBadRequest, model.ErrorResponse{
+					Code:    http.StatusBadRequest,
+					Message: "Error during updating event",
+					Error:   err.Error(),
+				})
+			} else {
+				log.Info("Event updated successfully")
+				c.Status(http.StatusAccepted)
+			}
+		}
+	}
+
+}
+
 func ListEvents(c *gin.Context) {
 
 	log := logger.WithFields(logrus.Fields{"tag": "List events"})
