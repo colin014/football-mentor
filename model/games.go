@@ -107,6 +107,10 @@ func GetAllEvents(gameId uint) ([]EventModel, error) {
 	return events, err
 }
 
+func DeleteEvents(gameId uint) error {
+	return db.Delete(EventModel{GameId: gameId}).Error
+}
+
 func DeleteEvent(gameId, eventId uint) error {
 	return db.Delete(EventModel{GameId: gameId, BaseModel: BaseModel{ID: eventId}}).Error
 }
@@ -121,6 +125,16 @@ func DeleteResult(gameId uint) error {
 }
 
 func DeleteGame(gameId uint) error {
+	err := DeleteResult(gameId)
+	if err != nil {
+		return err
+	}
+
+	err = DeleteEvents(gameId)
+	if err != nil {
+		return err
+	}
+
 	return db.Delete(GameModel{BaseModel: BaseModel{ID: gameId}}).Error
 }
 
