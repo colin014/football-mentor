@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"github.com/banzaicloud/banzai-types/components"
 	"github.com/colin014/football-mentor/utils"
 )
 
@@ -77,7 +76,7 @@ func UpdateGame(c *gin.Context) {
 
 	if game, err := model.GetGame(uint(gameId)); err != nil {
 		log.Errorf("Error during getting game: %s", err.Error())
-		c.JSON(http.StatusNotFound, components.ErrorResponse{
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Game not found",
 			Error:   err.Error(),
@@ -94,7 +93,7 @@ func UpdateGame(c *gin.Context) {
 			})
 		} else if err := game.Update(&gameRequest); err != nil {
 			log.Errorf("Error during update game: %s", err.Error())
-			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Code:    http.StatusBadRequest,
 				Message: "Error during update player",
 				Error:   err.Error(),
@@ -118,14 +117,14 @@ func DeleteGame(c *gin.Context) {
 
 	if game, err := model.GetGame(uint(gameId)); err != nil {
 		log.Errorf("Error during getting game: %s", err.Error())
-		c.JSON(http.StatusNotFound, components.ErrorResponse{
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Game not found",
 			Error:   err.Error(),
 		})
 	} else if err := game.DeleteGame(); err != nil {
 		log.Errorf("Error during delete game: %s", err.Error())
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
 			Error:   err.Error(),
@@ -165,7 +164,7 @@ func CreateEvents(c *gin.Context) {
 
 	if err := createEventRequest.SaveEvents(uint(gameId)); err != nil {
 		log.Errorf("Error during save events: %s", err.Error())
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during save",
 			Error:   err.Error(),
@@ -191,7 +190,7 @@ func ListEvents(c *gin.Context) {
 
 	if events, err := model.GetAllEvents(uint(gameId)); err != nil {
 		log.Errorf("Error during listing events: %s", err.Error())
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during listing events",
 			Error:   err.Error(),
@@ -221,7 +220,7 @@ func DeleteEvent(c *gin.Context) {
 	log.Infof("Start deleting event with gameId[%d], and evenId[%d]", gameId, eventId)
 
 	if err := model.DeleteEvent(uint(gameId), uint(eventId)); err != nil {
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
 			Error:   err.Error(),
@@ -237,7 +236,7 @@ func DeleteEvent(c *gin.Context) {
 func getGameId(c *gin.Context) (int, bool) {
 	gameId, err := utils.ConvertStringToInt(c.Param("gameid"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "GameId is not a number",
 			Error:   "Wrong game id",
@@ -251,7 +250,7 @@ func getGameId(c *gin.Context) (int, bool) {
 func getEventId(c *gin.Context) (int, bool) {
 	eventId, err := utils.ConvertStringToInt(c.Param("eventid"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "EventId is not a number",
 			Error:   "Wrong event id",
@@ -275,32 +274,46 @@ func CreateResult(c *gin.Context) {
 	log.Debugf("Game id: %d", gameId)
 	log.Info("Binding request")
 
-	var createResultRequest model.ResultModel
-	if err := c.BindJSON(&createResultRequest); err != nil {
-		log.Errorf("Error during binding request: %s", err.Error())
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "Error during binding request",
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
 			Error:   err.Error(),
 		})
-		return
-	}
-
-	log.Info("Binding succeeded")
-	log.Info("Save into database")
-
-	if err := createResultRequest.SaveResult(uint(gameId)); err != nil {
-		log.Errorf("Error during save: %s", err.Error())
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+	} else if result, _ := model.GetResult(uint(gameId)); result != nil {
+		log.Errorf("Game[%d] has already a result: %#v", gameId, result)
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
-			Message: "Error during save",
-			Error:   err.Error(),
+			Message: "Result already exists",
 		})
-		return
-	}
+	} else {
+		var createResultRequest model.ResultModel
+		if err := c.BindJSON(&createResultRequest); err != nil {
+			log.Errorf("Error during binding request: %s", err.Error())
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during binding request",
+				Error:   err.Error(),
+			})
+		} else {
+			log.Info("Binding succeeded")
+			log.Info("Save into database")
 
-	log.Info("Save succeeded")
-	c.Status(http.StatusCreated)
+			if err := createResultRequest.SaveResult(uint(gameId)); err != nil {
+				log.Errorf("Error during save: %s", err.Error())
+				c.JSON(http.StatusBadRequest, model.ErrorResponse{
+					Code:    http.StatusBadRequest,
+					Message: "Error during save",
+					Error:   err.Error(),
+				})
+				return
+			} else {
+				log.Info("Save succeeded")
+				c.Status(http.StatusCreated)
+			}
+		}
+	}
 
 }
 
@@ -315,7 +328,7 @@ func UpdateResult(c *gin.Context) {
 
 	if _, err := model.GetGame(uint(gameId)); err != nil {
 		log.Errorf("Error during getting game: %s", err.Error())
-		c.JSON(http.StatusNotFound, components.ErrorResponse{
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Error during getting game",
 			Error:   err.Error(),
@@ -325,21 +338,21 @@ func UpdateResult(c *gin.Context) {
 		var resultRequest model.UpdateResultRequest
 		if err := c.BindJSON(&resultRequest); err != nil {
 			log.Errorf("Error during binding request: %s", err.Error())
-			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Code:    http.StatusBadRequest,
 				Message: "Error during binding request",
 				Error:   err.Error(),
 			})
 		} else if result, err := model.GetResult(uint(gameId)); err != nil {
 			log.Errorf("Error during getting result: %s", err.Error())
-			c.JSON(http.StatusNotFound, components.ErrorResponse{
+			c.JSON(http.StatusNotFound, model.ErrorResponse{
 				Code:    http.StatusNotFound,
 				Message: "Error during getting result",
 				Error:   err.Error(),
 			})
 		} else if err := result.Update(&resultRequest); err != nil {
 			log.Errorf("Error during updating result: %s", err.Error())
-			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Code:    http.StatusBadRequest,
 				Message: "Error during updating result",
 				Error:   err.Error(),
@@ -365,21 +378,21 @@ func DeleteResult(c *gin.Context) {
 
 	if _, err := model.GetGame(uint(gameId)); err != nil {
 		log.Errorf("Error during getting game: %s", err.Error())
-		c.JSON(http.StatusNotFound, components.ErrorResponse{
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Error during getting game",
 			Error:   err.Error(),
 		})
 	} else if _, err := model.GetResult(uint(gameId)); err != nil {
 		log.Errorf("Error during getting result: %s", err.Error())
-		c.JSON(http.StatusNotFound, components.ErrorResponse{
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Error during getting result",
 			Error:   err.Error(),
 		})
 	} else if err := model.DeleteResult(uint(gameId)); err != nil {
 		log.Errorf("Error deleting result: %s", err.Error())
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
 			Error:   err.Error(),

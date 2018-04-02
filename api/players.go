@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"github.com/banzaicloud/banzai-types/components"
 	"github.com/colin014/football-mentor/utils"
 )
 
@@ -75,7 +74,7 @@ func UpdatePlayer(c *gin.Context) {
 
 	if player, err := model.GetPlayer(uint(playerId)); err != nil {
 		log.Errorf("Error during getting player: %s", err.Error())
-		c.JSON(http.StatusNotFound, components.ErrorResponse{
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Player not found",
 			Error:   err.Error(),
@@ -92,7 +91,7 @@ func UpdatePlayer(c *gin.Context) {
 			})
 		} else if err := player.Update(&playerRequest); err != nil {
 			log.Errorf("Error during update player: %s", err.Error())
-			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Code:    http.StatusBadRequest,
 				Message: "Error during update player",
 				Error:   err.Error(),
@@ -141,7 +140,7 @@ func DeletePlayer(c *gin.Context) {
 func getPlayerId(c *gin.Context) (int, bool) {
 	gameId, err := utils.ConvertStringToInt(c.Param("playerid"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, components.ErrorResponse{
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "PlayerId is not a number",
 			Error:   "Wrong player id",
