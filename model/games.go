@@ -34,6 +34,11 @@ type ResultModel struct {
 	AwayGoal int  `json:"away_goal"`
 }
 
+type UpdateResultRequest struct {
+	HomeGoal *int `json:"home_goal,omitempty"`
+	AwayGoal *int `json:"away_goal,omitempty"`
+}
+
 type GameListResponse struct {
 	Games []GameModel `json:"games" binding:"required"`
 }
@@ -131,6 +136,25 @@ func (request *CreateEventRequest) SaveEvents(gameId uint) error {
 
 	return nil
 
+}
+
+func (r *ResultModel) Update(req *UpdateResultRequest) error {
+
+	if req.HomeGoal != nil {
+		r.HomeGoal = *req.HomeGoal
+	}
+
+	if req.AwayGoal != nil {
+		r.AwayGoal = *req.AwayGoal
+	}
+
+	return db.Save(&r).Error
+}
+
+func GetResult(gameId uint) (*ResultModel, error) {
+	var result ResultModel
+	err := db.Where(ResultModel{GameId: gameId}).First(&result).Error
+	return &result, err
 }
 
 func GetAllEvents(gameId uint) ([]EventModel, error) {

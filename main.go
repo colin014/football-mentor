@@ -55,6 +55,7 @@ func main() {
 	v1.DELETE("/games/:gameid", api.DeleteGame)
 
 	v1.POST("/games/:gameid/result", api.CreateResult)
+	v1.PUT("/games/:gameid/result", api.UpdateResult)
 	v1.DELETE("/games/:gameid/result", api.DeleteResult)
 
 	v1.POST("/games/:gameid/events", api.CreateEvents)

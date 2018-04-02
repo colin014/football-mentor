@@ -304,8 +304,55 @@ func CreateResult(c *gin.Context) {
 
 }
 
+func UpdateResult(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Update result"})
+	log.Info("Start updating result")
+
+	gameId, isOk := getGameId(c)
+	if !isOk {
+		return
+	}
+
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, components.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
+			Error:   err.Error(),
+		})
+	} else {
+		log.Info("Binding request")
+		var resultRequest model.UpdateResultRequest
+		if err := c.BindJSON(&resultRequest); err != nil {
+			log.Errorf("Error during binding request: %s", err.Error())
+			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during binding request",
+				Error:   err.Error(),
+			})
+		} else if result, err := model.GetResult(uint(gameId)); err != nil {
+			log.Errorf("Error during getting result: %s", err.Error())
+			c.JSON(http.StatusNotFound, components.ErrorResponse{
+				Code:    http.StatusNotFound,
+				Message: "Error during getting result",
+				Error:   err.Error(),
+			})
+		} else if err := result.Update(&resultRequest); err != nil {
+			log.Errorf("Error during updating result: %s", err.Error())
+			c.JSON(http.StatusBadRequest, components.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during updating result",
+				Error:   err.Error(),
+			})
+		} else {
+			log.Info("Result updated successfully")
+			c.Status(http.StatusAccepted)
+		}
+	}
+}
+
 func DeleteResult(c *gin.Context) {
-	log := logger.WithFields(logrus.Fields{"tag": "Create result"})
+	log := logger.WithFields(logrus.Fields{"tag": "Delete result"})
 
 	log.Info("Start deleting result")
 
