@@ -180,8 +180,11 @@ func (e *EventModel) Update(r *UpdateEventModel) error {
 
 func GetResult(gameId uint) (*ResultModel, error) {
 	var result ResultModel
-	err := db.Where(ResultModel{GameId: gameId}).First(&result).Error
-	return &result, err
+	if err := db.Where(ResultModel{GameId: gameId}).First(&result).Error; err != nil {
+		return nil, err
+	} else {
+		return &result, nil
+	}
 }
 
 func GetEvent(gameId, eventId uint) (EventModel, error) {
