@@ -75,18 +75,24 @@ func DeleteGame(c *gin.Context) {
 		return
 	}
 
-	if err := model.DeleteGame(uint(gameId)); err != nil {
+	if game, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, components.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Game not found",
+			Error:   err.Error(),
+		})
+	} else if err := game.DeleteGame(); err != nil {
 		log.Errorf("Error during delete game: %s", err.Error())
 		c.JSON(http.StatusBadRequest, components.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
 			Error:   err.Error(),
 		})
-		return
+	} else {
+		log.Info("Delete succeeded")
+		c.Status(http.StatusOK)
 	}
-
-	log.Info("Delete succeeded")
-	c.Status(http.StatusOK)
 
 }
 
