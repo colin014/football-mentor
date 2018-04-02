@@ -26,6 +26,8 @@ func init() {
 		model.ResultModel.TableName(model.ResultModel{}),
 		", ",
 		model.EventModel.TableName(model.EventModel{}),
+		", ",
+		model.StaffModel.TableName(model.StaffModel{}),
 	)
 
 	db.AutoMigrate(
@@ -34,6 +36,7 @@ func init() {
 		&model.GameModel{},
 		&model.ResultModel{},
 		&model.EventModel{},
+		&model.StaffModel{},
 	)
 }
 
@@ -62,6 +65,11 @@ func main() {
 	v1.GET("/games/:gameid/events", api.ListEvents)
 	v1.PUT("/games/:gameid/events/:eventid", api.UpdateEvent)
 	v1.DELETE("/games/:gameid/events/:eventid", api.DeleteEvent)
+
+	v1.GET("/staff", api.ListStaff)
+	v1.POST("/staff", api.CreateStaffMember)
+	v1.PUT("/staff/:staffid", api.UpdateStaffMember)
+	v1.DELETE("/staff/:staffid", api.DeleteStaffMember)
 
 	v1.GET("/mobile/dashboard", api.GetDashboardData)
 
