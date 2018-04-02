@@ -363,17 +363,30 @@ func DeleteResult(c *gin.Context) {
 
 	log.Debugf("Game id: %d", gameId)
 
-	if err := model.DeleteResult(uint(gameId)); err != nil {
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, components.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
+			Error:   err.Error(),
+		})
+	} else if _, err := model.GetResult(uint(gameId)); err != nil {
+		log.Errorf("Error during getting result: %s", err.Error())
+		c.JSON(http.StatusNotFound, components.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting result",
+			Error:   err.Error(),
+		})
+	} else if err := model.DeleteResult(uint(gameId)); err != nil {
 		log.Errorf("Error deleting result: %s", err.Error())
 		c.JSON(http.StatusBadRequest, components.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
 			Error:   err.Error(),
 		})
-		return
+	} else {
+		log.Info("Delete succeeded")
+		c.Status(http.StatusOK)
 	}
-
-	log.Info("Delete succeeded")
-	c.Status(http.StatusOK)
 
 }
