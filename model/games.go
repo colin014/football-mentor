@@ -124,10 +124,10 @@ func DeleteResult(gameId uint) error {
 	return db.Delete(ResultModel{GameId: gameId}).Error
 }
 
-func GetGame(gameId uint) (GameModel, error) {
+func GetGame(gameId uint) (*GameModel, error) {
 	var game GameModel
 	err := db.Where(GameModel{BaseModel: BaseModel{ID: gameId}}).First(&game).Error
-	return game, err
+	return &game, err
 }
 
 func (g *GameModel) DeleteGame() error {

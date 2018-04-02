@@ -43,7 +43,8 @@ func main() {
 
 	v1.GET("/players", api.GetPlayers)
 	v1.POST("/players", api.CreatePlayer)
-	v1.DELETE("/player/:id", api.DeletePlayer)
+	v1.PUT("/players/:playerid", api.UpdatePlayer)
+	v1.DELETE("/player/:playerid", api.DeletePlayer)
 
 	v1.GET("/club", api.GetClubInfo)
 	v1.PUT("/club", api.UpdateClubInfo)
