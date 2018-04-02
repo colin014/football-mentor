@@ -3,6 +3,7 @@ package model
 type StaffModel struct {
 	BaseModel
 	Name        string `json:"name" binding:"required"`
+	ImageUrl    string `json:"image_url,omitempty"`
 	Phone       string `json:"phone,omitempty"`
 	Email       string `json:"email,omitempty"`
 	Description string `json:"description" binding:"required"`
@@ -10,6 +11,7 @@ type StaffModel struct {
 
 type UpdateStaffRequest struct {
 	Name        string `json:"name,omitempty"`
+	ImageUrl    string `json:"image_url,omitempty"`
 	Phone       string `json:"phone,omitempty"`
 	Email       string `json:"email,omitempty"`
 	Description string `json:"description"`
@@ -43,6 +45,10 @@ func (s *StaffModel) Update(r *UpdateStaffRequest) error {
 
 	if len(r.Description) != 0 {
 		s.Description = r.Description
+	}
+
+	if len(r.ImageUrl) != 0 {
+		s.ImageUrl = r.ImageUrl
 	}
 
 	return db.Save(&s).Error
