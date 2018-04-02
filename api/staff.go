@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/colin014/football-mentor/model"
 	"net/http"
-	"github.com/colin014/football-mentor/utils"
 )
 
 func ListStaff(c *gin.Context) {
@@ -62,14 +61,14 @@ func UpdateStaffMember(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update staff member"})
 	log.Info("Start updating staff member")
 
-	id, isOk := getStaffId(c)
+	id, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
 
 	log.Info("Getting staff member from database")
 
-	if staffMember, err := model.GetStaffMember(uint(id)); err != nil {
+	if staffMember, err := model.GetStaffMember(id); err != nil {
 		log.Errorf("Error during getting staff member: %s", err.Error())
 		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
@@ -107,12 +106,12 @@ func DeleteStaffMember(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Delete staff member"})
 	log.Info("Start deleting staff member")
 
-	staffId, isOK := getStaffId(c)
+	staffId, isOK := getIdFromGin(c)
 	if !isOK {
 		return
 	}
 
-	if staffMember, err := model.GetStaffMember(uint(staffId)); err != nil {
+	if staffMember, err := model.GetStaffMember(staffId); err != nil {
 		log.Errorf("Error during getting staff member: %s", err.Error())
 		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
@@ -131,18 +130,4 @@ func DeleteStaffMember(c *gin.Context) {
 		c.Status(http.StatusOK)
 	}
 
-}
-
-func getStaffId(c *gin.Context) (int, bool) {
-	staffId, err := utils.ConvertStringToInt(c.Param("staffid"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "StaffId is not a number",
-			Error:   "Wrong staff id",
-		})
-		return 0, false
-	} else {
-		return int(staffId), true
-	}
 }

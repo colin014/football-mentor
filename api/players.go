@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"github.com/colin014/football-mentor/utils"
 )
 
 func GetPlayers(c *gin.Context) {
@@ -67,12 +66,12 @@ func UpdatePlayer(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update player"})
 	log.Info("Start updating player")
 
-	playerId, isOk := getPlayerId(c)
+	playerId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
 
-	if player, err := model.GetPlayer(uint(playerId)); err != nil {
+	if player, err := model.GetPlayer(playerId); err != nil {
 		log.Errorf("Error during getting player: %s", err.Error())
 		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
@@ -108,15 +107,15 @@ func DeletePlayer(c *gin.Context) {
 
 	log := logger.WithFields(logrus.Fields{"tag": "Delete player"})
 
-	id, isOk := getPlayerId(c)
+	id, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
 
-	log.Infof("Player id: %d", uint(id))
+	log.Infof("Player id: %d", id)
 	var player model.PlayerModel
-	if err := model.GetPlayerById(uint(id), &player); err != nil {
-		log.Errorf("Error during getting player from database[%d]: %s", uint(id), err.Error())
+	if err := model.GetPlayerById(id, &player); err != nil {
+		log.Errorf("Error during getting player from database[%d]: %s", id, err.Error())
 		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Player not found",
@@ -124,7 +123,7 @@ func DeletePlayer(c *gin.Context) {
 		})
 	} else {
 		if err := player.Delete(); err != nil {
-			log.Errorf("Error during deleting player[%d]: %s", uint(id), err.Error())
+			log.Errorf("Error during deleting player[%d]: %s", id, err.Error())
 			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Code:    http.StatusBadRequest,
 				Message: "Error during deleting player",
@@ -135,18 +134,4 @@ func DeletePlayer(c *gin.Context) {
 		}
 	}
 
-}
-
-func getPlayerId(c *gin.Context) (int, bool) {
-	gameId, err := utils.ConvertStringToInt(c.Param("playerid"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "PlayerId is not a number",
-			Error:   "Wrong player id",
-		})
-		return 0, false
-	} else {
-		return int(gameId), true
-	}
 }

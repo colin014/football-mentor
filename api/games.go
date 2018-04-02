@@ -69,7 +69,7 @@ func UpdateGame(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update game"})
 	log.Info("Start updating game")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -110,7 +110,7 @@ func DeleteGame(c *gin.Context) {
 
 	log.Info("Start deleting game")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -143,7 +143,7 @@ func CreateEvents(c *gin.Context) {
 
 	log.Info("Binding request")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -189,12 +189,12 @@ func UpdateEvent(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update event"})
 	log.Info("Start updating event")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
 
-	eventId, isOk := getEventId(c)
+	eventId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -247,7 +247,7 @@ func ListEvents(c *gin.Context) {
 
 	log := logger.WithFields(logrus.Fields{"tag": "List events"})
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -280,33 +280,33 @@ func DeleteEvent(c *gin.Context) {
 
 	log.Info("Start deleting events")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
 
-	eventId, isOk := getEventId(c)
+	eventId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
 
 	log.Infof("Start deleting event with gameId[%d], and evenId[%d]", gameId, eventId)
 
-	if _, err := model.GetGame(uint(gameId)); err != nil {
+	if _, err := model.GetGame(gameId); err != nil {
 		log.Errorf("Error during getting game: %s", err.Error())
 		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Error during getting game",
 			Error:   err.Error(),
 		})
-	} else if _, err := model.GetEvent(uint(gameId), uint(eventId)); err != nil {
+	} else if _, err := model.GetEvent(gameId, eventId); err != nil {
 		log.Errorf("Error during getting event: %s", err.Error())
 		c.JSON(http.StatusNotFound, model.ErrorResponse{
 			Code:    http.StatusNotFound,
 			Message: "Error during getting event",
 			Error:   err.Error(),
 		})
-	} else if err := model.DeleteEvent(uint(gameId), uint(eventId)); err != nil {
+	} else if err := model.DeleteEvent(gameId, eventId); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Error during deleting",
@@ -318,40 +318,12 @@ func DeleteEvent(c *gin.Context) {
 	}
 }
 
-func getGameId(c *gin.Context) (int, bool) {
-	gameId, err := utils.ConvertStringToInt(c.Param("gameid"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "GameId is not a number",
-			Error:   "Wrong game id",
-		})
-		return 0, false
-	} else {
-		return int(gameId), true
-	}
-}
-
-func getEventId(c *gin.Context) (int, bool) {
-	eventId, err := utils.ConvertStringToInt(c.Param("eventid"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.ErrorResponse{
-			Code:    http.StatusBadRequest,
-			Message: "EventId is not a number",
-			Error:   "Wrong event id",
-		})
-		return 0, false
-	} else {
-		return int(eventId), true
-	}
-}
-
 func CreateResult(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Create result"})
 
 	log.Info("Start creating result")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -406,7 +378,7 @@ func UpdateResult(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update result"})
 	log.Info("Start updating result")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
@@ -454,7 +426,7 @@ func DeleteResult(c *gin.Context) {
 
 	log.Info("Start deleting result")
 
-	gameId, isOk := getGameId(c)
+	gameId, isOk := getIdFromGin(c)
 	if !isOk {
 		return
 	}
