@@ -254,7 +254,14 @@ func ListEvents(c *gin.Context) {
 
 	log.Infof("Start listing events by gameId: %d", gameId)
 
-	if events, err := model.GetAllEvents(uint(gameId)); err != nil {
+	if _, err := model.GetGame(uint(gameId)); err != nil {
+		log.Errorf("Error during getting game: %s", err.Error())
+		c.JSON(http.StatusNotFound, model.ErrorResponse{
+			Code:    http.StatusNotFound,
+			Message: "Error during getting game",
+			Error:   err.Error(),
+		})
+	} else if events, err := model.GetAllEvents(uint(gameId)); err != nil {
 		log.Errorf("Error during listing events: %s", err.Error())
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
