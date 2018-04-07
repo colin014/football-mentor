@@ -61,7 +61,7 @@ func UpdateStaffMember(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update staff member"})
 	log.Info("Start updating staff member")
 
-	id, isOk := getIdFromGin(c)
+	id, isOk := getIdFromGin(c, StaffId)
 	if !isOk {
 		return
 	}
@@ -106,7 +106,7 @@ func DeleteStaffMember(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Delete staff member"})
 	log.Info("Start deleting staff member")
 
-	staffId, isOK := getIdFromGin(c)
+	staffId, isOK := getIdFromGin(c, StaffId)
 	if !isOK {
 		return
 	}

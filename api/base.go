@@ -19,8 +19,17 @@ func init() {
 	db = database.GetDB()
 }
 
-func getIdFromGin(c *gin.Context) (uint, bool) {
-	if gameId, err := utils.ConvertStringToInt(c.Param("id")); err != nil {
+type GinParam string
+
+var (
+	GameId   GinParam = "gameid"
+	PlayerId GinParam = "playerid"
+	StaffId  GinParam = "staffid"
+	EventId  GinParam = "eventid"
+)
+
+func getIdFromGin(c *gin.Context, param GinParam) (uint, bool) {
+	if gameId, err := utils.ConvertStringToInt(c.Param(string(param))); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Id is not a number",

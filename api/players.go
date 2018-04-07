@@ -66,7 +66,7 @@ func UpdatePlayer(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update player"})
 	log.Info("Start updating player")
 
-	playerId, isOk := getIdFromGin(c)
+	playerId, isOk := getIdFromGin(c, PlayerId)
 	if !isOk {
 		return
 	}
@@ -107,7 +107,7 @@ func DeletePlayer(c *gin.Context) {
 
 	log := logger.WithFields(logrus.Fields{"tag": "Delete player"})
 
-	id, isOk := getIdFromGin(c)
+	id, isOk := getIdFromGin(c, PlayerId)
 	if !isOk {
 		return
 	}

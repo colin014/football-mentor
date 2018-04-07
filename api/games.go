@@ -68,7 +68,7 @@ func UpdateGame(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update game"})
 	log.Info("Start updating game")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
@@ -109,7 +109,7 @@ func DeleteGame(c *gin.Context) {
 
 	log.Info("Start deleting game")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
@@ -142,7 +142,7 @@ func CreateEvents(c *gin.Context) {
 
 	log.Info("Binding request")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
@@ -188,12 +188,12 @@ func UpdateEvent(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update event"})
 	log.Info("Start updating event")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
 
-	eventId, isOk := getIdFromGin(c)
+	eventId, isOk := getIdFromGin(c, EventId)
 	if !isOk {
 		return
 	}
@@ -246,7 +246,7 @@ func ListEvents(c *gin.Context) {
 
 	log := logger.WithFields(logrus.Fields{"tag": "List events"})
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
@@ -279,12 +279,12 @@ func DeleteEvent(c *gin.Context) {
 
 	log.Info("Start deleting events")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
 
-	eventId, isOk := getIdFromGin(c)
+	eventId, isOk := getIdFromGin(c, EventId)
 	if !isOk {
 		return
 	}
@@ -322,7 +322,7 @@ func CreateResult(c *gin.Context) {
 
 	log.Info("Start creating result")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
@@ -377,7 +377,7 @@ func UpdateResult(c *gin.Context) {
 	log := logger.WithFields(logrus.Fields{"tag": "Update result"})
 	log.Info("Start updating result")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
@@ -425,7 +425,7 @@ func DeleteResult(c *gin.Context) {
 
 	log.Info("Start deleting result")
 
-	gameId, isOk := getIdFromGin(c)
+	gameId, isOk := getIdFromGin(c, GameId)
 	if !isOk {
 		return
 	}
