@@ -6,7 +6,6 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.10
-      - image: vault:latest
 
     working_directory: /go/src/github.com/colin014/football-mentor
     steps:
