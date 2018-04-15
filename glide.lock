@@ -1,5 +1,5 @@
 hash: 9d1447d88cbbd6cc0815e954e354aa2ad95c469f59d189be97e658a245aa66d6
-updated: 2018-03-10T22:52:05.980827+01:00
+updated: 2018-04-15T19:41:52.256379+02:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: f12c6236fe7b5cf6bcf30e5935d08cb079d78334
@@ -10,6 +10,8 @@ imports:
   subpackages:
   - binding
   - render
+- name: github.com/go-errors/errors
+  version: 3afebba5a48dbc89b574d890b6b34d9ee10b4785
 - name: github.com/go-sql-driver/mysql
   version: 404c02a8a39c65a587e5ceedbd6e29c2ca185aca
 - name: github.com/golang/protobuf
