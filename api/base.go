@@ -22,11 +22,12 @@ func init() {
 type GinParam string
 
 var (
-	GameId   GinParam = "gameid"
-	PlayerId GinParam = "playerid"
-	StaffId  GinParam = "staffid"
-	EventId  GinParam = "eventid"
-	TeamId   GinParam = "teamid"
+	GameId     GinParam = "gameid"
+	PlayerId   GinParam = "playerid"
+	StaffId    GinParam = "staffid"
+	EventId    GinParam = "eventid"
+	TeamId     GinParam = "teamid"
+	TrainingId GinParam = "trainingid"
 )
 
 func getIdFromGin(c *gin.Context, param GinParam) (uint, bool) {

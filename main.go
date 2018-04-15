@@ -30,6 +30,8 @@ func init() {
 		model.StaffModel.TableName(model.StaffModel{}),
 		", ",
 		model.TeamModel.TableName(model.TeamModel{}),
+		", ",
+		model.TrainingModel.TableName(model.TrainingModel{}),
 	)
 
 	db.AutoMigrate(
@@ -40,6 +42,7 @@ func init() {
 		&model.EventModel{},
 		&model.StaffModel{},
 		&model.TeamModel{},
+		&model.TrainingModel{},
 	)
 }
 
@@ -78,6 +81,11 @@ func main() {
 	v1.POST("/team", api.CreateTeam)
 	v1.PUT("/team/:teamid", api.UpdateTeam)
 	v1.DELETE("/team/:teamid", api.DeleteTeam)
+
+	v1.GET("training", api.ListTrainings)
+	v1.POST("training", api.CreateTraining)
+	v1.PUT("training/:trainingid", api.UpdateTraining)
+	v1.DELETE("training/:trainingid", api.DeleteTraining)
 
 	v1.GET("/mobile/dashboard", api.GetDashboardData)
 
