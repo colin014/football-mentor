@@ -26,6 +26,7 @@ var (
 	PlayerId GinParam = "playerid"
 	StaffId  GinParam = "staffid"
 	EventId  GinParam = "eventid"
+	TeamId   GinParam = "teamid"
 )
 
 func getIdFromGin(c *gin.Context, param GinParam) (uint, bool) {

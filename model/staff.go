@@ -62,10 +62,10 @@ func (s *StaffModel) Delete() error {
 	return db.Delete(&s).Error
 }
 
-func GetStaffMember(staffId uint) (StaffModel, error) {
+func GetStaffMember(staffId uint) (*StaffModel, error) {
 	var staff StaffModel
 	err := db.Where(StaffModel{BaseModel: BaseModel{ID: staffId}}).First(&staff).Error
-	return staff, err
+	return &staff, err
 }
 
 func GetStaff() ([]StaffModel, error) {
