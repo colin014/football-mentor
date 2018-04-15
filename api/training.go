@@ -21,6 +21,13 @@ func CreateTraining(c *gin.Context) {
 			Message: "Error during binding request",
 			Error:   err.Error(),
 		})
+	} else if err := request.Validate(); err != nil {
+		log.Errorf("Error during validate request: %s", err.Error())
+		c.JSON(http.StatusBadRequest, model.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Error during validate request",
+			Error:   err.Error(),
+		})
 	} else if request.Save(); err != nil {
 		log.Errorf("Error during saving training: %s", err.Error())
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{
@@ -82,6 +89,13 @@ func UpdateTraining(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, model.ErrorResponse{
 				Code:    http.StatusBadRequest,
 				Message: "Error during binding request",
+				Error:   err.Error(),
+			})
+		} else if err := updateRequest.Validate(); err != nil {
+			log.Errorf("Error during validate request: %s", err.Error())
+			c.JSON(http.StatusBadRequest, model.ErrorResponse{
+				Code:    http.StatusBadRequest,
+				Message: "Error during validate request",
 				Error:   err.Error(),
 			})
 		} else if err := training.Update(&updateRequest); err != nil {

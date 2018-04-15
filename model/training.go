@@ -1,5 +1,9 @@
 package model
 
+import (
+	"github.com/colin014/football-mentor/utils"
+)
+
 type TrainingModel struct {
 	BaseModel
 	Location     string `json:"location" binding:"required"`
@@ -61,6 +65,20 @@ func (t *TrainingModel) Update(r *UpdateTrainingRequest) error {
 	}
 
 	return t.Save()
+}
+
+func (t *TrainingModel) Validate() error {
+	if t.DayOfTheWeek <= 0 || t.DayOfTheWeek > 7 {
+		return utils.ErrNotSupportedDayOfTheWeek
+	}
+	return nil
+}
+
+func (r *UpdateTrainingRequest) Validate() error {
+	if r.DayOfTheWeek <= 0 || r.DayOfTheWeek > 7 {
+		return utils.ErrNotSupportedDayOfTheWeek
+	}
+	return nil
 }
 
 func GetTrainings() ([]TrainingModel, error) {
