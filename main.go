@@ -87,6 +87,7 @@ func main() {
 	v1.PUT("training/:trainingid", api.UpdateTraining)
 	v1.DELETE("training/:trainingid", api.DeleteTraining)
 
+	v1.GET("/mobile/config", api.GetConfig)
 	v1.GET("/mobile/dashboard", api.GetDashboardData)
 
 	router.Run(":6060")

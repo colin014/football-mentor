@@ -11,6 +11,22 @@ type DashboardResponse struct {
 	NextGame      *GameModel `json:"next_game,omitempty"`
 }
 
+// todo save to database, if table empty fill it with base menu structure
+type ConfigResponse struct {
+	Menus []Menu `json:"menus,omitempty"`
+}
+
+type Menu struct {
+	Title     string     `json:"title,omitempty"`
+	Disabled  bool       `json:"disabled,omitempty"`
+	MenuItems []MenuItem `json:"menu_items,omitempty"`
+}
+
+type MenuItem struct {
+	Title    string `json:"title,omitempty"`
+	Disabled bool   `json:"disabled,omitempty"`
+}
+
 type EventType int
 
 const (

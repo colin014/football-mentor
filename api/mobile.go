@@ -45,3 +45,25 @@ func GetDashboardData(c *gin.Context) {
 	}
 
 }
+
+func GetConfig(c *gin.Context) {
+	log := logger.WithFields(logrus.Fields{"tag": "Get dashboard"})
+	log.Info("Start getting config")
+
+	// todo these should came from database
+	c.JSON(http.StatusOK, model.ConfigResponse{
+		Menus: []model.Menu{
+			{Title: "Dashboard"},
+			{Title: "Players"},
+			{Title: "Games"},
+			{
+				Title: "Teams",
+				MenuItems: []model.MenuItem{
+					{Title: "Felnott"},
+					{Title: "U19"},
+				},
+			},
+			{Title: "Staff"},
+		},
+	})
+}
