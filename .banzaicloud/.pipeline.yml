@@ -3,4 +3,3 @@ pipeline:
     image: golang
     commands:
       - go build
-      - go test
