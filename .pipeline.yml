@@ -2,5 +2,5 @@ pipeline:
   backend:
     image: golang
     commands:
-     - go build
-     - go test
+      - go build
+      - go test
