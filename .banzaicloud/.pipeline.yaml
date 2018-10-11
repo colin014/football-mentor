@@ -1,5 +1,21 @@
+workspace:
+    base: /go
+    path: src/github.com/colin014/football-mentor
+
 pipeline:
-  build:
-    image: golang
-    commands:
-      - go build
+    create_cluster:
+        image: banzaicloud/ci-pipeline-client:latest
+        action: CreateCluster
+        secret:
+            name: paas-dev
+        cluster:
+            cloud: google
+            distribution: gke
+            location: us-central1-a
+            name: gkecluster-colin-483
+            reuse: true
+
+    build:
+        image: golang:1.10
+        commands:
+            - make build
