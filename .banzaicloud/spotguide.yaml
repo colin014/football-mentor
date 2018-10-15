@@ -1,0 +1,72 @@
+name: 'Spark 2.3.2 with Spark History Server'
+description: 'TODO write a description'
+tags: ['Spark', 'Spark History Server', 'Spark applications']
+resources:
+  sumCpu: 8
+  sumMem: 12
+  filters: []
+  sameSize: false
+  onDemandPct: 30
+  minNodes: 3
+  maxNodes: 4
+questions: 
+- type: pipeline
+  dataType: string
+  label: 'Spark image name'
+  default: 'spark-2.3.2.build-41'
+  group: Spark
+  targets:
+    - spark.image.name
+- type: pipeline
+  dataType: boolean
+  label: "Monitoring"
+  required: true
+  group: Monitoring
+  key: monitoring
+  default: true
+  targets:
+    - almafa
+- type: pipeline
+  dataType: string
+  label: 'Metrics properties'
+  required: false
+  group: Monitoring
+  showIf:
+    properties:
+      monitoring:
+        const: true
+  targets:
+    - kortefa
+- type: pipeline
+  dataType: string
+  label: 'Grafana dashboard'
+  required: false
+  group: Monitoring
+  showIf:
+    properties:
+      monitoring:
+        const: true
+  targets:
+    - kortefa
+- type: pipeline
+  dataType: boolean
+  default: true
+  label: 'History Server'
+  required: true
+  key: historyServer
+  group: History Server
+  targets:
+    - almafa
+- type: bucket
+  name: bucketke
+  label: 'Bucket Name'
+  description: 'This bucket will be used to store spark logs.'
+  required: true
+  group: History Server
+  showIf:
+    properties:
+      historyServer:
+        const: true
+  targets:
+    - name: create_bucket.bucket.name
+    - cloud_provider: create_bucket.bucket.cloud

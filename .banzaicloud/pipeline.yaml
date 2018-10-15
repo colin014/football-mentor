@@ -1,0 +1,94 @@
+pipeline:
+  create_cluster:
+    image: banzaicloud/ci-pipeline-client:latest
+    cluster:
+      name: colin-spotguide4
+      location: us-west-2
+      cloud: amazon
+      secretId: afde29ed45aa6d866d33ec6be8fbde50e6dd486e8f9f1027ed27f1db39e3d6f7
+      secretName: ""
+      profileName: ""
+      postHooks:
+        InstallLogging:
+          bucketName: baluchicken-spark-test
+          region: eu-west-1
+          secretId: afde29ed45aa6d866d33ec6be8fbde50e6dd486e8f9f1027ed27f1db39e3d6f7
+        InstallMonitoring: {}
+      properties:
+        eks:
+          nodePools:
+            pool1:
+              instanceType: t2.medium
+              spotPrice: "0.05"
+              autoscaling: true
+              minCount: 1
+              maxCount: 2
+              count: 1
+              image: ""
+            pool2:
+              instanceType: c4.large
+              spotPrice: "0.1"
+              autoscaling: true
+              minCount: 1
+              maxCount: 2
+              count: 1
+              image: ""
+            pool3:
+              instanceType: m4.large
+              spotPrice: "0.1"
+              autoscaling: true
+              minCount: 1
+              maxCount: 2
+              count: 1
+              image: ""
+            system:
+              instanceType: t2.medium
+              spotPrice: ""
+              autoscaling: true
+              minCount: 1
+              maxCount: 2
+              count: 1
+              image: ""
+    action: EnsureCluster
+    installsecret: true
+  create_bucket:
+    action: EnsureBucket
+    bucket:
+      cloud: null
+      name: baluchicken-test-bucket-spark
+      secretName: my-amazon-secret-95
+    image: banzaicloud/ci-pipeline-client:latest
+  install_application_secrets:
+    image: banzaicloud/ci-pipeline-client:latest
+    action: InstallSecrets
+    cluster:
+      secrets:
+        application:
+          namespace: default
+          query:
+            tags:
+            - repo:{{ .DRONE_REPO }}
+  package_application:
+    image: lachlanevenson/k8s-helm:latest
+    commands:
+    - helm init -c
+    - helm repo add banzaicloud-stable http://kubernetes-charts.banzaicloud.com/branch/master
+    - helm package -u ./.banzaicloud/charts/spotguide-spark
+  deploy_application:
+    image: banzaicloud/ci-pipeline-client:latest
+    action: EnsureDeployment
+    deployment:
+      name: ./spotguide-spark-1.0.0.tgz
+      releaseName: '{{ .DRONE_REPO_NAME }}'
+      values:
+        spark-hs:
+          app:
+            logDirectory: s3a://baluchicken-spark-test/
+          secretName: '{{ .DRONE_REPO_NAME }}-hs-secret'
+          ingress:
+            enabled: true
+            annotations:
+              kubernetes.io/ingress.class: traefik
+              traefik.frontend.rule.type: PathPrefixStrip
+            hosts:
+            - shs.{{ .DRONE_REPO_NAME }}.{{ .CLUSTER_NAME }}.{{ .ORG_NAME }}.banzaicloud.io

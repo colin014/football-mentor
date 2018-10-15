@@ -1,0 +1,121 @@
+Congratulations, you have deployed Spark Spotguide to Kubernetes! Your release is named {{ .Release.Name }}.
+
+### Spark Submit
+
+To run the below mentioned commands the kubernetes config needs to be set properly. To do that run the following commands:
+
+```
+# Get pipeline access token
+https://beta.dev.banzaicloud.com/pipeline/api/v1/token
+
+# Get the Kubernetes config
+
+
+export KUBECONFIG=<file contains the fetched config>
+```
+
+{{- if  eq (.Values.banzaicloud.cluster.distribution) "eks" }}
+In case of Amazon EKS a small authenticator program is required to be able to access the cluster. It can be installed using the following command:
+```
+go get -u -v github.com/kubernetes-sigs/aws-iam-authenticator/cmd/aws-iam-authenticator
+```
+{{- end }}
+
+To run your application in spark running on Kubernetes. A couple of extra arguments are required to `spark-submit`.
+
+Kubernetes master address must be retrieved, run the following command to retrieve it:
+
+```
+$ kubectl cluster-info | grep "Kubernetes master"
+```
+
+Spark-submit also requires some credentials to be able to speak with the Kubernetes master. 
+
+{{- if eq (.Values.banzaicloud.cluster.distribution) "eks" }}
+
+These credentials can be parsed from kubernetes config. These values are keys so they are base64 encoded remember to decode before saving them.
+
+```
+echo $KUBECONFIG | xargs cat | grep certificate-authority-data
+echo $KUBECONFIG | xargs cat | grep client-certificate-data
+echo $KUBECONFIG | xargs cat | grep client-key-data
+```
+Save all these to files like `certificate-authority-data.pem`, `client-certificate-data.pem`, `client-certificate-data.pem`.
+
+```
+bin/spark-submit \
+--master k8s://<<kubernetes master ip>> \
+--deploy-mode cluster \
+--class org.apache.spark.examples.SparkPi \
+--conf spark.app.name=spark-pi \
+--conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
+--conf spark.local.dir=/tmp/spark-locals \
+--conf spark.kubernetes.docker.image.pullPolicy=Always \
+--conf spark.kubernetes.container.image=banzaicloud/spark:{{ .Values.spark.image.name }} \
+--conf spark.kubernetes.authenticate.submission.caCertFile=<your path to certificate-authority-data.pem> \
+--conf spark.kubernetes.authenticate.submission.clientKeyFile=<your path to client-certificate-data.pem> \
+--conf spark.kubernetes.authenticate.submission.clientCertFile=<your path to client-certificate-data.pem> \
+--conf spark.eventLog.enabled=true \
+--conf spark.eventLog.dir="gs://my-spark-logs/" \
+--conf spark.metrics.conf=/var/spark-data/spark-files/metrics.properties \
+--files /spark-on-k8s/conf/metrics.properties \
+local:///opt/spark/examples/jars/spark-examples_2.11-2.2.0-k8s-0.5.0.jar 5000
+```
+
+{{- end }}
+
+{{- if  eq (.Values.banzaicloud.cluster.distribution) "eks" }}
+
+This can be done by calling:
+```
+aws-iam-authenticator token -i {{ .Values.banzaicloud.cluster.name }}
+```
+
+```
+bin/spark-submit \
+--master k8s://<<kubernetes master ip>> \
+--deploy-mode cluster \
+--class org.apache.spark.examples.SparkPi \
+--conf spark.app.name=spark-pi \
+--conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
+--conf spark.local.dir=/tmp/spark-locals \
+--conf spark.kubernetes.docker.image.pullPolicy=Always \
+--conf spark.kubernetes.container.image=banzaicloud/spark:{{ .Values.spark.image.name }} \
+--conf spark.kubernetes.authenticate.submission.oauthToken=<your oathtoken> \
+--conf spark.eventLog.enabled=true \
+--conf spark.eventLog.dir="gs://my-spark-logs/" \
+--conf spark.metrics.conf=/var/spark-data/spark-files/metrics.properties \
+--files /spark-on-k8s/conf/metrics.properties \
+local:///opt/spark/examples/jars/spark-examples_2.11-2.2.0-k8s-0.5.0.jar 5000
+```
+
+{{- end }}
+
+Currently Spark on Kubernetes does not support uploading your application from your computer using `spark submit`, eiter your application must
+hosted in a remote location like s3 or http server.
+
+### Spark History Server
+
+To access logs created by your spark job, we are using spark history server which can be accessed from here:
+
+### Monitoring
+
+The monitoring dashboard can be accessed on the following hosts:
+
+> TODO link to secrets
+
+## Secrets
+
+## CI/CD pipeline
+
+Every time you make changes to the source code and update the `master` branch, the CI/CD pipeline will be triggered to reconfigure your spark cluster.
+
+> TODO link to CI
+
+cluster:
+  id: {{ .Values.banzaicloud.cluster.id }}
+  name: {{ .Values.banzaicloud.cluster.name }}
+  cloud: {{ .Values.banzaicloud.cluster.cloud }}
+  distribution: {{ .Values.banzaicloud.cluster.distribution }}
+  location: {{ .Values.banzaicloud.cluster.location }}
+tags: {{ .Values.banzaicloud.tags | join ", " }}
